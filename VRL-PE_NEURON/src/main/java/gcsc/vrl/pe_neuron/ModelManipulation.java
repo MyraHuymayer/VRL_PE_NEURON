@@ -2,7 +2,9 @@
 package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
+import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -57,17 +59,76 @@ public class ModelManipulation implements Serializable{
     }
     
     public void relevantTimeSpan(@ParamInfo(name ="Start")double tstart, 
-            @ParamInfo(name ="End") double tstop){
-       
+            @ParamInfo(name ="End") double tstop)throws IOException{
         
+        //Ensure that starting time is smaller than ending time
+        if(tstart >= tstop){
+            
+            throw new IOException("Error: the starting value must precede the ending value! ");
+        }
+        //Ensure that time values are positive 
+        if(tstart < 0 || tstop < 0){
+            
+            throw new IOException("Error: Time may not be negative! ");
+        }
         
         StoreValues tuple = new StoreValues(tstart, tstop);
         
         
+        System.out.println("Val 1 = "+tuple.getValue1()+" ; Val 2 = "+ tuple.getValue2());
         
 
         timespan.add(tuple);
         System.out.println("size of array timespan: "+timespan.size());
+        
+ 
+        if(timespan.size()>=2){
+            //compare last entered values to previous values
+            for(int i = 0; i < timespan.size()-1 ; i++){
+                //check if timespans overlap
+                
+                double tstart_old = timespan.get(i).getValue1();
+                double tstop_old =  timespan.get(i).getValue2();
+                double tstart_new = tuple.getValue1();
+                double tstop_new = tuple.getValue2();
+                
+                //case tstart_old smallest val and tstop_old highest value 
+                if(tstart_old <= tstart_new  
+                        && tstop_old >= tstop_new){
+                    
+                    //remove the last element since the new values are bordered by an older input
+                    timespan.remove(timespan.size() -1);
+                    
+                }else if(tstart_old >= tstart_new  
+                        && tstop_old <= tstop_new){
+                    
+                    //remove the element that is engulfed by the newly inserted timespan
+                    timespan.remove(i);
+                    
+                }else if(tstart_old <= tstart_new
+                        && tstop_old <= tstop_new 
+                        && tstop_old >= tstart_new){
+                    //remove both the last added tuple and the old tuple 
+                    timespan.remove(timespan.size() -1);
+                    timespan.remove(i);
+                    //add a new element with new borders 
+                    StoreValues newtuple = new StoreValues(tstart_old, tstop_new);
+                    timespan.add(newtuple);
+                    
+                }else if(tstart_old >= tstart_new 
+                        && tstart_old <= tstop_new 
+                        && tstop_old >= tstop_new){
+                    
+                    //remove both the last added tuple and the old tuple 
+                    timespan.remove(timespan.size() -1);
+                    timespan.remove(i);
+                    //add a new element with new borders 
+                    StoreValues newtuple = new StoreValues(tstart_new, tstop_old);
+                    timespan.add(newtuple);
+                    
+                }
+            }
+        }
        
 
         
@@ -76,6 +137,7 @@ public class ModelManipulation implements Serializable{
     }
     
     public void dataRaster(@ParamInfo(name ="Next datapoint for evaluation")int timeStep){
+        //nur gerade Zahlen sollen man auswaehlen koennen 
         
     }
     
@@ -91,5 +153,46 @@ public class ModelManipulation implements Serializable{
         return timespan;
     }
     
-    
+    /**
+     * selectSort algorithm modified after the code example on http://rosettacode.org/wiki/Sorting_algorithms/Selection_sort#Java
+     * for an ArrayList<ValueStorage> 
+     * @param timespan ArrayList containing all the timespans added by the user 
+     * @return the sorted Arraylist of timespans
+     */
+    @MethodInfo(noGUI=true)
+    public ArrayList<StoreValues> selectSortTimespans(ArrayList<StoreValues> timespan){
+        
+        //Verglichen werden immer die ersten Werte --> gespeichert werden dann aber am Schluss die 
+        for(int i = 0; i<timespan.size()-1; i++){
+            double smallest = Double.MAX_VALUE;
+            int smallestAt = i+1;
+            
+            for(int j = i; j<timespan.size(); j++){
+                if(timespan.get(j).getValue1() < smallest){
+                    smallestAt = j;
+                    smallest = timespan.get(j).getValue1();
+                }
+            }
+            StoreValues tmp = timespan.get(i);
+            timespan.set(i, timespan.get(smallestAt));
+            timespan.set(smallestAt, tmp);
+        }
+        
+        return timespan;
+    }
 }
+//public static void sort(int[] nums){
+//	for(int currentPlace = 0;currentPlace<nums.length-1;currentPlace++){
+//		int smallest = Integer.MAX_VALUE;
+//		int smallestAt = currentPlace+1;
+//		for(int check = currentPlace; check<nums.length;check++){
+//			if(nums[check]<smallest){
+//				smallestAt = check;
+//				smallest = nums[check];
+//			}
+//		}
+//		int temp = nums[currentPlace];
+//		nums[currentPlace] = nums[smallestAt];
+//		nums[smallestAt] = temp;
+//	}
+//}
