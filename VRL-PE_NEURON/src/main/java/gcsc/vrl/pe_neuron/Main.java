@@ -4,7 +4,10 @@
  */
 package gcsc.vrl.pe_neuron;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -17,9 +20,10 @@ public class Main {
      * @param args the command line arguments
      */
 //    
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, FileNotFoundException, URISyntaxException {
         ModelManipulation mm = new ModelManipulation();
         
+        mm.hocFilename("Fig1c1.hoc");
         mm.modelUnits("ms", "nA");
         double[] e = mm.getExponents();
         System.out.println("time conversion: "+e[0]);
@@ -56,6 +60,12 @@ public class Main {
             System.out.print("Value 1 " + newList.get(i).getValue1()+"; ");
             System.out.print("Value 2 " + newList.get(i).getValue2()+ "\n");
         }
+        
+        WriteToLua wtl = new WriteToLua();
+        wtl.setPath("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/VRL-PE_NEURON/src/main/resources/");
+        wtl.setModeldata(mm);
+        wtl.copyParamEst_frame();
+        wtl.replaceHocFile();
 
     }
 //    public static void main(String[] args) {
