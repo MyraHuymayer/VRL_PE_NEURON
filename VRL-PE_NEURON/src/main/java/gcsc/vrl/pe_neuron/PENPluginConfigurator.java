@@ -34,6 +34,7 @@ public class PENPluginConfigurator extends VPluginConfigurator{
             vapi.addComponent(MethodOptions.class);
             vapi.addComponent(CreateXML.class);
             vapi.addComponent(ModelManipulation.class);
+            vapi.addComponent(ExpDataManipulation.class);
         }
     }
     

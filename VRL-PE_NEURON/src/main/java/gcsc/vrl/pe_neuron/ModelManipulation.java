@@ -16,12 +16,20 @@ import java.util.ArrayList;
 public class ModelManipulation implements Serializable{
     
     private static final long serialVersionUID = 1L;
-    
     private double[] exponents;
-    private transient ArrayList<StoreValues> timespan = new ArrayList<StoreValues>();
+    
 
-    //Wie sollen die Einheiten konvertiert werden? 
-    //NOTE: das wird jetzt erst mal so implementiert, dass 
+    private transient ArrayList<StoreValues> timespan = new ArrayList<StoreValues>();
+    private int nextDataPoint;
+    private String hocFile;
+    private transient ArrayList<StoreValues> variables = new ArrayList<StoreValues>();
+    /*------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+   
+    /**
+     * Entry of the time and current units that were returned by the model
+     * @param timeUnit Unit of time in seconds (s) or milliseconds (ms) --> conversion to ms
+     * @param currentUnit Unit of current in picoampere (pA), nanoampere (nA), microampere (uA), milliampere (mA) or ampere (A) --> conversion to mA
+     */
     public void modelUnits(@ParamInfo(name ="", style="selection", options="value=[\"ms\", \"s\"]")String timeUnit, 
             @ParamInfo(name ="", style="selection", options="value=[\"pA\", \"nA\",\"uA\", \"mA\", \"A\"]")String currentUnit){
         
@@ -58,6 +66,12 @@ public class ModelManipulation implements Serializable{
         
     }
     
+    /**
+     * User entry of the time span, in which residua will be calculated; more than one entry is possible. 
+     * @param tstart starting time
+     * @param tstop ending time
+     * @throws IOException 
+     */
     public void relevantTimeSpan(@ParamInfo(name ="Start")double tstart, 
             @ParamInfo(name ="End") double tstop)throws IOException{
         
@@ -129,28 +143,72 @@ public class ModelManipulation implements Serializable{
                 }
             }
         }
-       
-
-        
-        
         
     }
     
-    public void dataRaster(@ParamInfo(name ="Next datapoint for evaluation")int timeStep){
-        //nur gerade Zahlen sollen man auswaehlen koennen 
-        
+    /**
+      * Choose the next data point that is to be evaluated (Reduction of Residua/data points). NOTE that only even values can be entered. 
+      * @param nextDataPoint next data point to be chooesen (e.g. timeStep = 40 --> choose the 40. data point from the current point)
+      * @throws IOException 
+      */
+    public void dataRaster(@ParamInfo(name ="Next datapoint for evaluation")int nextDataPoint) throws IOException{
+        //check if next data point is even!
+        //TODO: nochmal darueber nachdenken ob das so wirklich Sinn macht 
+        if(nextDataPoint%2 != 0){
+            throw new IOException("Error: Only even numbers to be inserted! ");
+        }else{
+            this.nextDataPoint = nextDataPoint;
+        } 
     }
     
-    public void hocFilename(@ParamInfo(name ="NEURON hoc File ", options="value=\"Fig1c1.hoc\"")String hocFile){
+    /**
+     * Enter the name of the hoc file that is to be called in the lua file. 
+     * @param hocFile name of the hoc-file
+     * @throws IOException 
+     */
+    public void hocFilename(@ParamInfo(name ="NEURON hoc File ", options="value=\"Fig1c1.hoc\"")String hocFile) throws IOException{
         
+        if(hocFile.contains(".hoc")){
+            
+            this.hocFile = hocFile;            
+        }else{
+            throw new IOException("Error: Not a hoc File! ");
+        }    
     }
 
-    public double[] getExponents() {
-        return exponents;
-    }
-
+    @MethodInfo(noGUI=true)
     public ArrayList<StoreValues> getTimespan() {
         return timespan;
+    }
+
+    @MethodInfo(noGUI=true)
+    public int getNextDataPoint() {
+        return nextDataPoint;
+    }
+
+    @MethodInfo(noGUI=true)
+    public String getHocFile() {
+        return hocFile;
+    }
+    
+    /**
+     * set a new variable that is relevant or needs to be changed in hoc file
+     * @param varName name of variable
+     * @param varVal value of variable
+     */
+    public void addVariable(@ParamInfo(name ="Variable name ")String varName, 
+            @ParamInfo(name ="Variable value ")double varVal
+            ){
+        
+        StoreValues var = new StoreValues(varName, varVal);
+        
+        variables.add(var);
+        
+    }
+
+    @MethodInfo(noGUI=true)
+    public ArrayList<StoreValues> getVariables() {
+        return variables;
     }
     
     /**
@@ -180,19 +238,9 @@ public class ModelManipulation implements Serializable{
         
         return timespan;
     }
+    
+    @MethodInfo(noGUI=true)
+    public double[] getExponents() {
+        return exponents;
+    }
 }
-//public static void sort(int[] nums){
-//	for(int currentPlace = 0;currentPlace<nums.length-1;currentPlace++){
-//		int smallest = Integer.MAX_VALUE;
-//		int smallestAt = currentPlace+1;
-//		for(int check = currentPlace; check<nums.length;check++){
-//			if(nums[check]<smallest){
-//				smallestAt = check;
-//				smallest = nums[check];
-//			}
-//		}
-//		int temp = nums[currentPlace];
-//		nums[currentPlace] = nums[smallestAt];
-//		nums[smallestAt] = temp;
-//	}
-//}
