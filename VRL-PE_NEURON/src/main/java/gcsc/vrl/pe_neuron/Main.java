@@ -36,6 +36,8 @@ public class Main {
         ModelManipulation mm = new ModelManipulation();
         
         mm.hocFilename("Fig1c1.hoc");
+        mm.setNameForOutputFile("Fig1c1", "kv4_OC");
+        
         mm.modelUnits("ms", "nA");
         double[] e = mm.getExponents();
         System.out.println("time conversion: "+e[0]);

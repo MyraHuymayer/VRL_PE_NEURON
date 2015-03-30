@@ -1,5 +1,5 @@
 -- load ug script util
-path_to_ug = --[##$$ PATHUG $#]
+path_to_ug = "/Users/myra/Documents/workspace/ug4" --[##$$ PATHUG $#]
 ug_load_script(path_to_ug.."/scripts/ug_util.lua") --path not correct!!!
 ug_load_script(path_to_ug.."/scripts/util/gnuplot.lua") --path not correct!!!
 
@@ -174,7 +174,7 @@ ls_param = 0
 
 
 --set the voltage step for the NEURON plugin
---set relevant hoch variables that will be set here 
+--set relevant hoc variables here 
 --[##$$ VAR_NAME = VAR_Double $$##]--
 
 --voltage_step is declared lateron
@@ -317,7 +317,7 @@ end
 voltage_step = vs 
 
 
-filename_Model = base_path..--[##$$ MODEL_FILENAME_PART1 $$##]--..wolfe..""..voltage_step..""..zoom.."--[##$$ MODEL_FILENAME_PART2 $$##]--"..ls_param..".txt"
+filename_Model = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--"..wolfe..""..voltage_step..""..zoom.."--[##$$ MODEL_FILENAME_PART2 $#]--"..ls_param..".txt"
 removeFirstLine( filename_Model )
 timeModel, currentModel = readFromFile(filename_Model, 1)
 
@@ -330,7 +330,7 @@ timeModel, currentModel = readFromFile(filename_Model, 1)
 
 
 -- das folgende muss wohl nicht geaendert werden 
-final_kv4currentModel, final_time_Model = cutDecimals(timeModel, kv4currentModel_newunit)
+final_kv4currentModel, final_time_Model = cutDecimals(timeModel, currentModel)
 
 -----------------------------------------------------------------
 -- Provide Reference Solution --> experimental data
@@ -346,7 +346,7 @@ timeData, currentData = readFromFile(filename_expData,1)
 
 
 
-final_kv4currentData, final_time_expData = cutDecimals(timeData_tmp2, kv4currentData_tmp2)	
+final_kv4currentData, final_time_expData = cutDecimals(timeData, kv4currentData)	
 
 
 -----------------------------------------------------------------
@@ -401,7 +401,7 @@ if common_file_name~="" then
 end	
 
 os.remove(filename_Model)
-fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]_99_mt3.txt"
+fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]--_99_mt3.txt"
 os.remove(fn_dummy_step)
-fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]_99_mt3.txt" --nochmal angucken--> das stimmt so naemlich gar nicht 
-os.remove(fn_dummy_step)
+fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99_mt3.txt" --nochmal angucken--> das stimmt so naemlich gar nicht 
+os.remove(fn_dummy_step) --nochmal darueber nachdenken ob das wirklich sinn macht

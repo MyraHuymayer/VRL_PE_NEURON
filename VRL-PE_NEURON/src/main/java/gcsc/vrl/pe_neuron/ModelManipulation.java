@@ -23,6 +23,8 @@ public class ModelManipulation implements Serializable{
     private int nextDataPoint;
     private String hocFile;
     private transient ArrayList<StoreValues> variables = new ArrayList<StoreValues>();
+    private String out_part1;
+    private String out_part2;
     /*------------------------------------------------------------------------------------------------------------------------------------------------------------*/
    
     /**
@@ -209,6 +211,21 @@ public class ModelManipulation implements Serializable{
     @MethodInfo(noGUI=true)
     public ArrayList<StoreValues> getVariables() {
         return variables;
+    }
+    
+    //Nicht sicher ob ich das so beibehalten moechte! 
+    public void setNameForOutputFile(String out_part1, String out_part2 ){
+        
+        this.out_part1 = out_part1;
+        this.out_part2 = out_part2;
+    }
+    
+    public String getOut_part1(){
+        return out_part1;
+    }
+    
+     public String getOut_part2(){
+        return out_part2;
     }
     
     /**
