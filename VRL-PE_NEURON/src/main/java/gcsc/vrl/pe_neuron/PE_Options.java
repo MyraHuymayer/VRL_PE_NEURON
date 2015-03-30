@@ -5,6 +5,7 @@
 package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
+import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import java.io.IOException;
 import java.io.Serializable;
@@ -25,6 +26,8 @@ public class PE_Options implements Serializable{
     private ArrayList<String> parameter_names =new ArrayList<String>();
 //    parameter_names = 
     private ArrayList<String> xml_line = new ArrayList<String>();
+    
+    private transient ArrayList<StoreValues> params = new ArrayList<StoreValues>();
      
 
     
@@ -41,6 +44,9 @@ public class PE_Options implements Serializable{
         
     
         parameter_names.add(paramName);
+        StoreValues param_name_val = new StoreValues(paramName, parameter);
+        
+        params.add(param_name_val);
         
         if(parameter_names.size() >=2){
             for(int ii = 0; ii < parameter_names.size()-1; ii++){
@@ -103,6 +109,7 @@ public class PE_Options implements Serializable{
        for(int i = 0; i< parameter_names.size(); i++){
            if(paramName.equals(parameter_names.get(i))){
                parameter_names.remove(i);
+               params.remove(i);
                System.out.println("Parameter removed :)!");
            }
        }
@@ -121,6 +128,12 @@ public class PE_Options implements Serializable{
        
        return for_file;
    }
+
+   @MethodInfo(noGUI=true)
+    public ArrayList<StoreValues> getParams() {
+        return params;
+    }
+
    
 }
 

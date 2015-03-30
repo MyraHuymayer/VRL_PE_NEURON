@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,8 +23,8 @@ public class WriteToLua {
     private File luaFile;
     private ModelManipulation modeldata = new ModelManipulation();
     private ExpDataManipulation expdata = new ExpDataManipulation(); 
-
-    
+    private MethodOptions method_options = new MethodOptions();
+    private PE_Options params = new PE_Options();
     
     //2. implement the changes made in the VRL Tool in the copy of paramEst.lua 
     
@@ -36,7 +37,7 @@ public class WriteToLua {
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     //unique methods
     /**
-     * make a working copy of paramEst_frame.lua in the resources folder
+     * make a working copy of paramEst_frame.lua in the resources folder; note that the lua file is set in this method
      * @param path
      * @throws IOException 
      */
@@ -72,9 +73,15 @@ public class WriteToLua {
 
     }    
     //note: it is more useful to make all or most changes in one method!!!!!
-    public void replaceHocFile() throws IOException{
+    public void rewriteScriptFile() throws IOException{
+        //set all the relevant data
         String hocFile = modeldata.getHocFile();
+        ArrayList<StoreValues> nVar = modeldata.getVariables();
+        ArrayList<StoreValues> rel_time = modeldata.getTimespan();
         
+        String basepath = method_options.getBasePath();
+        ArrayList<StoreValues> parameters = params.getParams();
+
         File tmp_out = new File(path+"tmp_output.lua");
         System.out.println(tmp_out.getCanonicalPath());
         FileInputStream fis = new FileInputStream(luaFile);
@@ -86,10 +93,67 @@ public class WriteToLua {
             FileOutputStream is = new FileOutputStream(tmp_out);
             OutputStreamWriter osw = new OutputStreamWriter(is, "UTF-8");
             Writer writer = new BufferedWriter(osw);
+            
             while((line = reader.readLine()) != null){
                 if(line.contains("--[##$$ HOCFILE_String $$##]--")){
                     line = line.replace("--[##$$ HOCFILE_String $$##]--", "\""+hocFile+"\"");
                     writer.write(line+"\n");
+                }else if(line.contains("--[##$$ PATH_String $$##]--")){
+                    line = line.replace("--[##$$ PATH_String $$##]--", "\""+basepath+"/\"");
+                    writer.write(line+"\n");
+                }else if(line.contains("--[##$$ VAR_NAME = VAR_Double $$##]--")){
+                    if(!nVar.isEmpty()){
+                        for(int i = 0; i < nVar.size(); i++){
+                            writer.write(nVar.get(i).getVarName()+"="+nVar.get(i).getValue1()+"\n");
+                        }                        
+                    }
+                }else if(line.contains("--[##$$ PARAMETERS_HERE $$##]--")){
+                    if(parameters.isEmpty()){
+                        throw new IOException("Error: No parameters were found! "); //is this really necessary???
+                    }else{
+                        for(int i = 0; i < parameters.size(); i++){
+                            writer.write(parameters.get(i).getVarName()+"="+parameters.get(i).getValue1()+"\n");
+                        }
+                    }
+                }else if (line.contains("--[##$$ SET_PARAMETERS_HERE $$##]--")){
+                    for(int i = 0; i<parameters.size(); i++){
+                        writer.write("\t\t"+"HocInterpreter:execute_hoc_stmt(\""+parameters.get(i).getVarName()+" =\".."+parameters.get(i).getVarName()+"..\"\")"+"\n");
+                    }
+                }else if(line.contains("--[##$$ SET_VARIABLES_HERE $$##]--")){
+                    if(!nVar.isEmpty()){
+                        for(int i =0; i < nVar.size(); i++){
+                            writer.write("\t\t\t"+"HocInterpreter:execute_hoc_stmt(\""+nVar.get(i).getVarName() +" =\".."+nVar.get(i).getVarName() +"..\"\")"+"\n");
+                        }
+                    }
+                    
+                }else if(line.contains("--[##$$ PARAMETERNAMES_HERE $$##]--")){
+                    String tmp = "";
+                    for(int i = 0; i < parameters.size(); i++){
+                        tmp = tmp + parameters.get(i).getVarName() + ",";
+                    }
+                    line = line.replace("--[##$$ PARAMETERNAMES_HERE $$##]--", tmp);
+                    writer.write(line+"\n");
+                }else if(line.contains("--[##$$ FUNC_clipData()_M FUNC_reduceTimesteps()_M  FUNC_appendTables() $$##]-- ")){
+                    writer.write("time_mod, current_mod = clipData("+rel_time.get(0).getValue1()+","+rel_time.get(0).getValue2()+",timeModel, currentModel)\n");
+                    writer.write("time_mod, current_mod = reduceTimesteps(time_mod, current_mod, "+modeldata.getNextDataPoint()+")\n");
+                    if(rel_time.size() > 1){
+                    
+                        for(int i = 1; i< rel_time.size(); i++){
+                            writer.write("t_tmp, c_tmp = clipData("+rel_time.get(i).getValue1()+","+rel_time.get(i).getValue2()+",timeModel, currentModel)\n");
+                            writer.write("t_tmp, c_tmp = reduceTimesteps(t_tmp, c_tmp, "+modeldata.getNextDataPoint()+")\n");
+                            writer.write("time_mod, current_mod = appendTables(time_mod,current_mod, t_tmp, c_tmp)\n");
+                        }
+                    }
+                }else if(line.contains("--[##$$ FUNC_convertUnits()_M $$##]-- ")){
+                    writer.write("timeModel = convertUnits(time_mod,"+modeldata.getExponents()[0]+")\n");
+                    writer.write("currentModel = convertUnits(current_mod,"+modeldata.getExponents()[1]+")\n");
+                }else if(line.contains("--[##$$ filename $$##]-- ")){
+                    line = line.replace("--[##$$ filename $$##]-- ", "\""+expdata.getDataFile().getName()+"\"");
+                    writer.write(line);
+                    
+                }else if(line.contains("--[##$$ FUNC_convertUnits_ED $$##]-- ")){
+                    writer.write("timeData = convertUnits(timeData,"+expdata.getExponents()[0]+")\n");
+                    writer.write("currentData = convertUnits(currentData,"+expdata.getExponents()[1]+")\n");
                 }else{
                     writer.write(line+"\n");
                 }
@@ -132,9 +196,21 @@ public class WriteToLua {
     public void setPath(String path) {
         this.path = path;
     }
-    
-    
-    
-    
-    
+
+    public void setMethod_options(MethodOptions method_options) {
+        this.method_options = method_options;
+    }
+
+    public MethodOptions getMethod_options() {
+        return method_options;
+    }
+
+    public void setParams(PE_Options params) {
+        this.params = params;
+    }
+
+    public PE_Options getParams() {
+        return params;
+    }
+   
 }

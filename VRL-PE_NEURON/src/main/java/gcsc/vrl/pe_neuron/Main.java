@@ -21,6 +21,18 @@ public class Main {
      */
 //    
     public static void main(String[] args) throws IOException, FileNotFoundException, URISyntaxException {
+        PE_Options peo = new PE_Options();
+        peo.generateParameterSet("Parameter", 23.656, 20, 26, "a");
+        peo.generateParameterSet("Parameter", 2, 1, 3, "za");
+        peo.generateParameterSet("Parameter", -0.5, -1, 0, "b");
+        peo.generateParameterSet("Parameter", 0.0070002648, 0.005, 0.009, "c");
+        peo.generateParameterSet("Parameter", 9, 8, 10, "q");
+        
+        MethodOptions mo = new MethodOptions();
+        File dir = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/VRL-PE_NEURON/build/resources/main/");
+        File script = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/VRL-PE_NEURON/build/resources/main/paramEst.lua");
+        mo.setPE_Methods("bfgs-sqp-fs", "wolf", 11, 50, dir, script, 10E-6);
+        
         ModelManipulation mm = new ModelManipulation();
         
         mm.hocFilename("Fig1c1.hoc");
@@ -28,6 +40,12 @@ public class Main {
         double[] e = mm.getExponents();
         System.out.println("time conversion: "+e[0]);
         System.out.println("current conversion: "+e[1]);
+        
+        
+        mm.addVariable("gmax", 30.5);
+        mm.addVariable("pulse", -10);
+        mm.addVariable("test", 0.764);
+        //ArrayList<StoreValues> nVar = mm.getVariables();
         
         mm.relevantTimeSpan(800, 889); //1.
         mm.relevantTimeSpan(30, 69); //2.
@@ -42,6 +60,7 @@ public class Main {
         mm.relevantTimeSpan(3990, 4020); //11. muesste mit 10. gemerged werden
         mm.relevantTimeSpan(9946, 9950); //12. --muesste mit 5. gemerged werden
         
+        mm.dataRaster(10);
         ArrayList<StoreValues> timespans = mm.getTimespan();
         
         System.out.println("");
@@ -61,11 +80,21 @@ public class Main {
             System.out.print("Value 2 " + newList.get(i).getValue2()+ "\n");
         }
         
+        
+        //experimental model data 
+        ExpDataManipulation edm = new ExpDataManipulation();
+        edm.modelUnits("ms", "pA");
+        File datafile = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/Trace_1_9_3_1.txt");
+        edm.dataFile(datafile);
+        
         WriteToLua wtl = new WriteToLua();
         wtl.setPath("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/VRL-PE_NEURON/src/main/resources/");
+        wtl.setMethod_options(mo);
         wtl.setModeldata(mm);
+        wtl.setParams(peo);
+        wtl.setExpdata(edm);
         wtl.copyParamEst_frame();
-        wtl.replaceHocFile();
+        wtl.rewriteScriptFile();
 
     }
 //    public static void main(String[] args) {

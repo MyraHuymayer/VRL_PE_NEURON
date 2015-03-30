@@ -93,7 +93,7 @@ AssertPluginsLoaded( {"MembranePotentialMapping"} )
 		local current_span = {}
 		
 		for i,v in ipairs(time) do
-			if tstart <= v and v <= tstop then --NOTE: tstart muss kleiner sein als tstop  --> das muss abgefangen werden, wenn dieses Programm mal von anderen usern genutzt wird
+			if tstart <= v and v <= tstop then 
 				time_span[#time_span +1] = v
 				current_span[#current_span + 1 ] = current[i]
 			end 
@@ -127,6 +127,16 @@ AssertPluginsLoaded( {"MembranePotentialMapping"} )
 	    file:close()
 	end
 
+	-------------------------------------------------------------------
+	-- append one table to another 
+	-------------------------------------------------------------------
+	function appendTables(time,current, newtime, newcurrent)
+		for i = 1, #newtime do
+			time[#time+1] = newtime[i]
+			current[#current+1] = newcurrent[i]
+		end 
+		return time, current
+	end 
 -----------------------------------------------------------------
 -- NEURON Plugin 
 -----------------------------------------------------------------
@@ -166,11 +176,7 @@ ls_param = 0
 --set the voltage step for the NEURON plugin
 --set relevant hoch variables that will be set here 
 --[##$$ VAR_NAME = VAR_Double $$##]--
---[##$$ VAR_NAME = VAR_int $$##]--
 
--- gmax = 
--- pulse = --[##$$ VAR_Double $$##]--
--- trace = --[##$$ VAR_int $$##]--
 --voltage_step is declared lateron
 
 str = parameter_file_name
@@ -273,7 +279,7 @@ HocInterpreter = Transformator()
 		-----------------------------------------------------------------
 		-- Reset Parameters "in hoc-File" 
 		-----------------------------------------------------------------
-		--[##$$ SET_PARAMETERS_IN_NEURON $$##]--
+		--[##$$ SET_PARAMETERS_HERE $$##]--
 		--e.g.: HocInterpreter:execute_hoc_stmt("a_new ="..a_new.."")
 
 		if vs ~= 1 then 
@@ -289,8 +295,7 @@ HocInterpreter = Transformator()
 			HocInterpreter:execute_hoc_stmt("ls_param ="..ls_param.."")
 			HocInterpreter:execute_hoc_stmt("wolf ="..wolfe.."")
 			HocInterpreter:execute_hoc_stmt("zoom ="..zoom.."")
-			HocInterpreter:execute_hoc_stmt("relpulse ="..pulse.."") -- hier nochmal drueber nachdenken 
-			HocInterpreter:execute_hoc_stmt("KMULTP ="..gmax.."") -- hier nochmal drueber nachdenken 
+			--[##$$ SET_VARIABLES_HERE $$##]--
 			
 			end 
 			
@@ -314,16 +319,15 @@ voltage_step = vs
 
 filename_Model = base_path..--[##$$ MODEL_FILENAME_PART1 $$##]--..wolfe..""..voltage_step..""..zoom.."--[##$$ MODEL_FILENAME_PART2 $$##]--"..ls_param..".txt"
 removeFirstLine( filename_Model )
-timeModel_tmp1, kv4currentModel_tmp1 = readFromFile(filename_Model, 1)
+timeModel, currentModel = readFromFile(filename_Model, 1)
 
 --choose relevant time-spans
 
---[##$$ FUNC_clipData() $$##]--
---[##$$ FUNC_reduceTimesteps() $$##]-- 
+--[##$$ FUNC_clipData()_M FUNC_reduceTimesteps()_M  FUNC_appendTables() $$##]-- 
 
 
---[##$$ FUNC_convertUnits() $$##]-- 
-kv4currentModel_newunit = convertUnits(kv4currentModel, 9)
+--[##$$ FUNC_convertUnits()_M $$##]-- 
+
 
 -- das folgende muss wohl nicht geaendert werden 
 final_kv4currentModel, final_time_Model = cutDecimals(timeModel, kv4currentModel_newunit)
@@ -334,22 +338,11 @@ final_kv4currentModel, final_time_Model = cutDecimals(timeModel, kv4currentModel
 
 filename_expData  = base_path..--[##$$ filename $$##]-- 
 
-timeData_tmp1, kv4currentData_tmp1 = readFromFile(filename_expData,1)
+timeData, currentData = readFromFile(filename_expData,1)
 
+-- convert units of exp. data (e.g.: s --> ms)
+--[##$$ FUNC_convertUnits_ED $$##]-- 
 
-timeData_tmp2 = {}
-
-
--- convert units of exp. data (s --> ms)
---[##$$ FUNC_convertUnits $$##]-- 
---[[
-for i,v in ipairs(timeData_tmp1) do
-
-	--kv4currentData_tmp2[#kv4currentData_tmp2 + 1] = v * 10^3
-	timeData_tmp2[#timeData_tmp2 + 1] = timeData_tmp1[i] * 10^3
-
-	end
-kv4currentData_tmp2 = convertUnits(kv4currentData_tmp1, 12)--]] --> als eine Funktion 
 
 
 
@@ -408,7 +401,7 @@ if common_file_name~="" then
 end	
 
 os.remove(filename_Model)
-fn_dummy_step = base_path..--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]_99_mt3.txt"
+fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]_99_mt3.txt"
 os.remove(fn_dummy_step)
 fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]_99_mt3.txt" --nochmal angucken--> das stimmt so naemlich gar nicht 
 os.remove(fn_dummy_step)
