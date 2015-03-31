@@ -17,16 +17,13 @@ import java.util.ArrayList;
  */
 public class WriteToLua {
     
-    //TODO: 
-    //1. Make a working copy of paramEst_frame.lua
     private String path;
     private File luaFile;
     private ModelManipulation modeldata = new ModelManipulation();
     private ExpDataManipulation expdata = new ExpDataManipulation(); 
     private MethodOptions method_options = new MethodOptions();
     private PE_Options params = new PE_Options();
-    
-    //2. implement the changes made in the VRL Tool in the copy of paramEst.lua 
+  
     
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     //Constructor
@@ -72,7 +69,11 @@ public class WriteToLua {
         }
 
     }    
-    //note: it is more useful to make all or most changes in one method!!!!!
+   
+    /**
+     * Method that integrates all the relevant data and functions that were given by the user in the copied lua script. 
+     * @throws IOException 
+     */
     public void rewriteScriptFile() throws IOException{
         //set all the relevant data
         String hocFile = modeldata.getHocFile();
@@ -128,9 +129,10 @@ public class WriteToLua {
                     
                 }else if(line.contains("--[##$$ PARAMETERNAMES_HERE $$##]--")){
                     String tmp = "";
-                    for(int i = 0; i < parameters.size(); i++){
+                    for(int i = 0; i < parameters.size()-1; i++){
                         tmp = tmp + parameters.get(i).getVarName() + ",";
                     }
+                    tmp = tmp + parameters.get(parameters.size()-1).getVarName();
                     line = line.replace("--[##$$ PARAMETERNAMES_HERE $$##]--", tmp);
                     writer.write(line+"\n");
                 }else if(line.contains("--[##$$ FUNC_clipData()_M FUNC_reduceTimesteps()_M  FUNC_appendTables() $$##]-- ")){

@@ -317,7 +317,7 @@ end
 voltage_step = vs 
 
 
-filename_Model = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--"..wolfe..""..voltage_step..""..zoom.."--[##$$ MODEL_FILENAME_PART2 $#]--"..ls_param..".txt"
+filename_Model = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe..""..voltage_step..""..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
 removeFirstLine( filename_Model )
 timeModel, currentModel = readFromFile(filename_Model, 1)
 
@@ -330,7 +330,7 @@ timeModel, currentModel = readFromFile(filename_Model, 1)
 
 
 -- das folgende muss wohl nicht geaendert werden 
-final_kv4currentModel, final_time_Model = cutDecimals(timeModel, currentModel)
+final_currentModel, final_time_Model = cutDecimals(timeModel, currentModel)
 
 -----------------------------------------------------------------
 -- Provide Reference Solution --> experimental data
@@ -346,7 +346,7 @@ timeData, currentData = readFromFile(filename_expData,1)
 
 
 
-final_kv4currentData, final_time_expData = cutDecimals(timeData, kv4currentData)	
+final_currentData, final_time_expData = cutDecimals(timeData, currentData)	
 
 
 -----------------------------------------------------------------
@@ -357,9 +357,6 @@ l2_defect = 0.0
 -----------------------------------------------------------------
 -- Evaluate Residia and write to common file
 -----------------------------------------------------------------
-kv4_data_ = {}
-
-
 if common_file_name ~="" then
 	residua = {}
 	for i, v in ipairs(final_time_expData) do 
@@ -367,15 +364,15 @@ if common_file_name ~="" then
 			
 			if final_time_expData[i] == final_time_Model[j]  then
 				
-				res_i = final_kv4currentModel[j] - final_kv4currentData[i] 
-				kv4_data_[#kv4_data_ +1 ] = final_kv4currentData[i]
+				res_i = final_currentModel[j] - final_currentData[i] 
+				
 				local file = io.open(data_directory..common_file_name,"a")
 				
 				l2_defect = l2_defect + res_i * res_i
 				file:write(res_i)
 				file:write(" ")
 				--print("L2-defect = ", l2_defect)
-				residua[#residua + 1] = final_kv4currentModel[j] - final_kv4currentData[i] 
+				residua[#residua + 1] = final_currentModel[j] - final_currentData[i] 
 				
 				file:close() 
 
@@ -401,7 +398,7 @@ if common_file_name~="" then
 end	
 
 os.remove(filename_Model)
-fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]--_99_mt3.txt"
+fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
 os.remove(fn_dummy_step)
-fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99_mt3.txt" --nochmal angucken--> das stimmt so naemlich gar nicht 
+fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" --nochmal angucken--> das stimmt so naemlich gar nicht 
 os.remove(fn_dummy_step) --nochmal darueber nachdenken ob das wirklich sinn macht
