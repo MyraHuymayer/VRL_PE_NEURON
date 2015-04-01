@@ -1,0 +1,222 @@
+//Name of output file is changed -- same changes as in Fig1c_t3.hoc
+load_file("nrngui.hoc")
+
+objectvar scene_vector_[4]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+
+
+// mid=12 /**/
+// dist=27 /**/
+secondorder=0 /**/
+FARADAY=96520 
+PI=3.14159 
+
+/*original soma [0] from Kuznetsova et. al. 
+-- propably we need a smaller diameter, since soma in experimental data was wrapped around the nucleus
+*/
+create soma
+ soma.nseg = 1
+ soma.diam = 3.38
+ soma.L = 3.38
+ 
+/*soma {pt3dclear()
+	pt3dadd(-11.98, -22.29, -1.4, 16.9)
+	pt3dadd(-8.006, -23.572, -1.4, 2.22)
+}*/
+
+// Dtmax = 1.5 
+// Dt = 1.5
+dt = 0.025 /*unfortunately NEURON does not accept a higher value than 0.025*/
+global_ra = 40
+forall Ra = global_ra
+// Rm = 28000 
+// Ra = 15000000//150
+global_cm = 1.0
+forall cm = global_cm
+//temperature from dissertation of Kashiotis.
+ g_celsius = 22
+// g_celsius = 34.0  
+celsius = g_celsius
+tstart = 0
+//ending time
+tstop =2699.95
+
+v_init = -40
+KMULTP = 30.4e-9 //15.4e-9// 63.4e-9 /*value from dissertation: 15.4e-9*/
+
+/*a_new = 7
+za_new = 0.315646648
+b_new = .090
+zb_new =-2.062276	// -1.23733656
+c_new = 1.01216107
+zc_new = 0.500095665
+d_new = 2.498881 //1.4993286		
+zd_new = -1.1546687
+k_new = 7.69049072			
+zk_new = 0.05502051
+l_new = 4.38562354			
+zl_new = -0.07092366 
+f_new = 0.277130485
+q_new = 1.01314807	
+kci_new = 0.121900093
+kic_new =  0.0017935468 
+
+a_new = 10.648768402428464
+za_new = 0.16476952304755
+b_new = 0.0469805625
+zb_new = -1.2476746167033783
+c_new = 1.554841597158428
+zc_new = 0.261053062727906
+d_new = 2.1885024026245166
+zd_new = -0.9645992200897386
+k_new = 8.97932084773197
+zk_new = 0.0388578913093126 
+//l_new = 4.590108740398876
+l_new = 3.55
+zl_new =  -0.0677680004028726
+f_new = 0.22459429461560684
+q_new = 1.2776528608687405
+kci_new = 0.10416237507077701
+kic_new = 0.002318596416033745 */
+
+a_new = 10.6487684024285
+za_new = 0.16476952304755
+b_new = 0.0469805625
+zb_new = -1.24767461670338
+c_new = 1.55484159715843
+zc_new = 0.261053062727906
+d_new = 2.18850240262452
+zd_new = -0.964599220089739
+k_new = 13.97932084773197
+zk_new = 0.0388578913093126
+l_new = 3.0
+zl_new = -0.0677680004028726
+f_new = 0.224594294615607
+q_new = 1.27765286086874
+kci_new = 0.104162375070777
+kic_new = 0.002318596416033745
+
+/*0.144 original value Fineberg*/
+// KMULTP = 570e-6 /*original value of Kuznetsova*/
+
+relpulse = 0
+// objref cvode
+// cvode = new CVode(0) 
+// x= cvode.active(0)
+
+objectvar vc
+
+//initialize Object reference
+objref rect, reci
+//initialize Object reference
+objref g
+
+//declare object references rect and reci to be Vectors -- store time and current 
+rect = new Vector()
+reci = new Vector()
+
+//declare object reference g to be a Graph
+g = new Graph(0) 
+//size of the graph
+ g.size(0,2700,-5e-9,5e-9)  
+//g.size(0,2700,-1e-6,1e-6)  
+
+proc init_cell(){
+soma{
+	{
+	insert kv4csi gmax_kv4csi = KMULTP a_kv4csi = a_new za_kv4csi = za_new
+	b_kv4csi = b_new zb_kv4csi = zb_new c_kv4csi = c_new zc_kv4csi = zc_new
+	d_kv4csi = d_new zd_kv4csi = zd_new k_kv4csi = k_new zk_kv4csi = zk_new
+	l_kv4csi = l_new zl_kv4csi = zl_new f_kv4csi = f_new q_kv4csi = q_new
+	kci_kv4csi = kci_new kic_kv4csi = kic_new
+	}
+	
+    }
+
+
+soma{  
+
+//steps in for schleife einbauen
+	vc = new MySEClamp(0.5)
+	vc.amp1 = -40.0 
+	vc.dur1 =  200
+	vc.amp2 = -120.0
+	vc.dur2 = 1000
+	//amp3 will be varied 
+	vc.amp3 = relpulse //-60.0, -50.0, -40.0, -10.0
+	vc.dur3 = 1000
+	vc.amp4 = -40.0
+	vc.dur4 = 500	
+}
+}
+init_cell()
+access soma
+
+//NOTE: it is necessary to implement the standard run system so it is supported by the NEURON Plugin in UG4
+proc init(){
+  access soma
+  t = tstart
+  finitialize(v_init)
+  fcurrent()
+}
+init()
+
+while (t<tstop){
+  fadvance()
+  testika = soma.ik(0.5)
+// print "*************** test************** = ", testika 
+}
+// finitialize(v_init)
+// fcurrent()
+// testika = soma.ik(0.5)
+// print "*************** test************** = ", testika 
+//write values of K-current and t into vectors -- therefore we need to plot the data first
+reci.record(&soma.ik(0.5))
+rect.record(&t)
+
+
+scene_vector_[3] = g
+// {g.view(0, -0.01, 2700, 0.02, 614, 72, 300.48, 200.32)} //sufficient for Kuznetsovas model
+ {g.view(0, -5e-9, 2700, 1e-8, 614, 72, 300.48, 200.32)}
+//{g.view(0, -1e-6, 2700, 2e-6, 614, 72, 300.48, 200.32)}
+graphList[1].append(g)
+g.save_name("graphList[1].")
+g.addvar("soma.ik( 0.5 )", 2, 1, 0.8, 0.9, 2)
+
+run()
+
+
+g.flush()
+
+
+voltage_step = 0
+ls_param = 99
+zoom = 0
+wolf = 0
+// voltage_step = vc.amp3
+strdef name, name2, name3, ending, str3, str4 
+objref tempmatrix
+//data saved to text file 
+objref savdata
+
+
+proc writefile(){
+	//name = "/Users/myra/NEURON-Projects/HH_ATypeCurrent_One_Compartmental_Model/Output_MARKOV/Gmax_63.4/Fig1c1_"   /*this is just for the sake of comparison with the HH OCM*/
+ name = "/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/Fig1c1_"
+// name = "Fig1c1_"
+  name2 = "_kv4_OC_"
+  ending = ".txt"
+  
+  sprint(str3, "%s%g%g%g%s%g%s",name,wolf,voltage_step, zoom, name2,ls_param,ending) 
+  savdata = new File()
+  savdata.wopen(str3)
+		
+  tempmatrix = new Matrix()
+  tempmatrix.resize(rect.size(),2)
+  tempmatrix.setcol(0, rect)
+  tempmatrix.setcol(1, reci)
+  tempmatrix.fprint(savdata, " %e")
+  savdata.close()
+}
+writefile()
