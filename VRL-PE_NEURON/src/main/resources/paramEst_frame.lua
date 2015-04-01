@@ -400,5 +400,5 @@ end
 os.remove(filename_Model)
 fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
 os.remove(fn_dummy_step)
-fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" --nochmal angucken--> das stimmt so naemlich gar nicht 
-os.remove(fn_dummy_step) --nochmal darueber nachdenken ob das wirklich sinn macht
+fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
+os.remove(fn_dummy_step) 

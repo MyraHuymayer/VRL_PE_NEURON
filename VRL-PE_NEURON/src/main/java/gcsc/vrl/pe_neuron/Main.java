@@ -83,14 +83,17 @@ public class Main {
         File datafile = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/Trace_1_9_7_1.txt");
         edm.dataFile(datafile);
         
-        WriteToLua wtl = new WriteToLua();
-        wtl.setPath("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/");
-        wtl.setMethod_options(mo);
-        wtl.setModeldata(mm);
-        wtl.setParams(peo);
-        wtl.setExpdata(edm);
-        wtl.copyParamEst_frame();
-        wtl.rewriteScriptFile();
+        ParameterEstimator pe = new ParameterEstimator();
+        pe.runParameterEstimator("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/", mm, edm, mo, peo);
+        
+//        WriteToLua wtl = new WriteToLua();
+//        wtl.setPath("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/");
+//        wtl.setMethod_options(mo);
+//        wtl.setModeldata(mm);
+//        wtl.setParams(peo);
+//        wtl.setExpdata(edm);
+//        wtl.copyParamEst_frame();
+//        wtl.rewriteScriptFile();
 
     }
 //    public static void main(String[] args) {

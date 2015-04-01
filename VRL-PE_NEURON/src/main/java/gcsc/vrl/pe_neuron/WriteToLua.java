@@ -39,17 +39,20 @@ public class WriteToLua {
      * @throws IOException 
      */
     public void copyParamEst_frame() throws IOException{
-                   
+                
         ClassLoader classLoader = getClass().getClassLoader();
+        System.out.println("HALLO?? hat er hier schon probleme ");
         String resource = classLoader.getResource("paramEst_frame.lua").getFile();
-        
-        
-        
+        System.out.println("Macht er das auch noch");
+        System.out.println("Er hat die Resource nicht gefunden oder? : ");
+        System.out.println(""+resource);
+        System.out.println("HALLLoooooo : ");
         luaFile = new File(path+"paramEst.lua");
         System.out.println(luaFile.getCanonicalPath());
         
         
         FileInputStream fis = new FileInputStream(resource);
+        System.out.println("Hier kommt er gar nicht hin!");
         BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
         
         String line; 
@@ -81,6 +84,7 @@ public class WriteToLua {
         ArrayList<StoreValues> rel_time = modeldata.getTimespan();
         
         String basepath = method_options.getBasePath();
+        System.out.println("BASEPATH = "+basepath);
         ArrayList<StoreValues> parameters = params.getParams();
 
         File tmp_out = new File(path+"tmp_output.lua");

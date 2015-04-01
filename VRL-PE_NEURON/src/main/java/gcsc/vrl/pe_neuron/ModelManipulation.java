@@ -92,7 +92,10 @@ public class ModelManipulation implements Serializable{
         
         
         System.out.println("Val 1 = "+tuple.getValue1()+" ; Val 2 = "+ tuple.getValue2());
-        
+
+        if(timespan == null){
+            timespan = new ArrayList<StoreValues>();
+        }
 
         timespan.add(tuple);
         System.out.println("size of array timespan: "+timespan.size());
@@ -203,7 +206,9 @@ public class ModelManipulation implements Serializable{
             ){
         
         StoreValues var = new StoreValues(varName, varVal);
-        
+        if(variables == null){
+            variables = new ArrayList<StoreValues>();
+        }
         variables.add(var);
         
     }

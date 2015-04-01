@@ -43,6 +43,18 @@ public class PE_Options implements Serializable{
         
         
     
+        if(parameter_names == null){
+            parameter_names =new ArrayList<String>();
+        }
+        
+        if(xml_line == null){
+            xml_line = new ArrayList<String>();
+        }
+        
+        if(params == null ){
+           params = new ArrayList<StoreValues>(); 
+        }
+        
         parameter_names.add(paramName);
         StoreValues param_name_val = new StoreValues(paramName, parameter);
         
@@ -134,10 +146,18 @@ public class PE_Options implements Serializable{
         return params;
     }
 
+   @MethodInfo(noGUI=true)
+    public ArrayList<String> getParameter_names() {
+        return parameter_names;
+    }
+
+   @MethodInfo(noGUI=true)
+    public ArrayList<String> getXml_line() {
+        return xml_line;
+    }
+
    
 }
-
-
 // @ComponentInfo(name="Add Integers", category="Custom")
 // class AddIntegers implements Serializable {
 // 

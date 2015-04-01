@@ -31,10 +31,11 @@ public class MethodOptions implements Serializable{
         String dd = data_directory.getCanonicalPath();
         String lua = lua_file.getCanonicalPath();
         
-        basePath = dd;
+        basePath = dd+"/";
+        System.out.println("------------------------************************ "+basePath);
         
         String tmp = "<Settings Method=\""+method+"\" LS_Method=\""+ls_method+"\" LS_Steps=\""+ls_steps+"\" Steps=\""+steps+"\" default_search_length=\"1.0\" data_directory=\"";
-        tmp = tmp +dd+"\" script=\" -ex "+lua+"\" ugshell=\"ugshell\" defect_adjust_abs=\"1.0E-5\" defect_adjust_rel=\"0.15\" norm_grad=\"";
+        tmp = tmp +basePath+"\" script=\" -ex "+lua+"\" ugshell=\"ugshell\" defect_adjust_abs=\"1.0E-5\" defect_adjust_rel=\"0.15\" norm_grad=\"";
         tmp = tmp +norm_grad+"\" min_step_abs=\"1.0E-6\" min_step_rel=\"1.0E-5\" verbose=\"false\"/>";
         
         
