@@ -23,16 +23,17 @@ public class MethodOptions implements Serializable{
             @ParamInfo(name ="Number of line search steps", options="value=11")int ls_steps, 
             @ParamInfo(name ="Number of steps", options="value=50")int steps, 
             @ParamInfo(name ="Base path", style = "load-folder-dialog", options = "") File data_directory,
-            @ParamInfo(name ="Script", style = "load-dialog", options = "")File lua_file,
             @ParamInfo(name="Norm gradient", options="value=1.0E-6D")double norm_grad) throws IOException{ //der Rest wird in der xml datei so gesetzt wie gehabt, da soll Nutzer keinen Einfluss drauf haben
         
         HeadLine method_info = new HeadLine();
         
         String dd = data_directory.getCanonicalPath();
-        String lua = lua_file.getCanonicalPath();
+        
         
         basePath = dd+"/";
-        System.out.println("------------------------************************ "+basePath);
+        
+        //lua script necessary for the parameter estimator --> since the user never has direct access or knowledge of this file, the name is defined here!
+        String lua = basePath+"paramEst.lua";
         
         String tmp = "<Settings Method=\""+method+"\" LS_Method=\""+ls_method+"\" LS_Steps=\""+ls_steps+"\" Steps=\""+steps+"\" default_search_length=\"1.0\" data_directory=\"";
         tmp = tmp +basePath+"\" script=\" -ex "+lua+"\" ugshell=\"ugshell\" defect_adjust_abs=\"1.0E-5\" defect_adjust_rel=\"0.15\" norm_grad=\"";

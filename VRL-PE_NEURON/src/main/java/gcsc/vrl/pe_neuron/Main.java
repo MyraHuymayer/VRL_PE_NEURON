@@ -42,8 +42,8 @@ public class Main {
         
         MethodOptions mo = new MethodOptions();
         File dir = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/");
-        File script = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/paramEst.lua");
-        mo.setPE_Methods("bfgs-sqp-fs", "wolf", 11, 50, dir, script, 10E-6);
+
+        mo.setPE_Methods("bfgs-sqp-fs", "wolf", 11, 50, dir, 10E-6);
         
         ModelManipulation mm = new ModelManipulation();
         
