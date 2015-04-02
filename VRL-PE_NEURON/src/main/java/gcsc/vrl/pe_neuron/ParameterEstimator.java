@@ -46,9 +46,7 @@ public class ParameterEstimator implements Serializable {
 			n.load_from_xml(path + "paramEst.xml");
 			try {
 				n.perform_fit();
-			} catch (InterruptedException iie) {
-				Logger.getLogger(ParameterEstimator.class.getName()).log(Level.SEVERE, null, iie);
-				System.exit(0);
+
 			} catch (Exception ex) {
 				Logger.getLogger(ParameterEstimator.class.getName()).log(Level.SEVERE, null, ex);
 				System.exit(0);
