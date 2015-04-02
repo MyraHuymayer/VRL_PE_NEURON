@@ -39,8 +39,18 @@ dependencies {
     compile (group: 'eu.mihosoft.vrl', name: 'vrl', version: '0.4.2.8.5-SNAPSHOT', classifier: 'sources')
     compile (group: 'eu.mihosoft.vrl', name: 'vrl', version: '0.4.2.8.5-SNAPSHOT', classifier: 'javadoc')
     
-//    compile files ('/Users/myra/Documents/workspace/ug4/apps/parameter_estimation/build/libs/parameter_estimation-1.0.jar')
-
+    
+    compile files ('/Users/myra/Documents/workspace/ug4/apps/parameter_estimation/build/libs/parameter_estimation-1.0.jar')
+    compile files ('/Users/myra/Documents/workspace/ug4/apps/parameter_estimation/lib/joptimizer-3.2.0.jar')
+    
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    compile group: 'colt', name: 'colt', version: '1.2.0'
+    compile group: 'com.yahoo.platform.yui', name: 'yuicompressor', version: '2.4.7'
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
+    compile group: 'log4j', name: 'log4j', version: '1.2.14'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
+    compile group: 'com.jcraft', name: 'jsch', version: '0.1.50'
 //    compile(group: 'org.apache.commons', name: 'commons-math3', version: '3.2')
 //    compile(group: 'org.apache.commons', name: 'commons-math3', version: '3.2', classifier: 'sources')
 }

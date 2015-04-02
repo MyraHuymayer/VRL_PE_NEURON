@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  *
@@ -20,7 +21,7 @@ public class Main {
      * @param args the command line arguments
      */
 //    
-    public static void main(String[] args) throws IOException, FileNotFoundException, URISyntaxException {
+    public static void main(String[] args) throws IOException, FileNotFoundException, URISyntaxException, ParserConfigurationException {
         
         PE_Options peo = new PE_Options();
         peo.generateParameterSet("Parameter", 10.6487684024285, 8, 12, "a_new");

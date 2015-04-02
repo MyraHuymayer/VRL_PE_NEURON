@@ -135,8 +135,8 @@ public class PE_Options implements Serializable{
            for_file.add(xml_line.get(i));
        } 
        
-       clearXML_line();
-       clearParameterNames();
+//       clearXML_line();
+//       clearParameterNames(); //das macht Probleme beim ParameterSchaetzer
        
        return for_file;
    }
