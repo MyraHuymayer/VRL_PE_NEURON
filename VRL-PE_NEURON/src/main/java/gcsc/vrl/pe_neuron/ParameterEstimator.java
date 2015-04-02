@@ -23,6 +23,7 @@ public class ParameterEstimator implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("UseSpecificCatch")
 	public void runParameterEstimator(String path,
 		ModelManipulation modeldata,
 		ExpDataManipulation expdata,
@@ -44,13 +45,12 @@ public class ParameterEstimator implements Serializable {
 			newton n = new newton();
 			n.load_from_xml(path + "paramEst.xml");
 			try {
-				try {
-					n.perform_fit();
-				} catch (InvocationTargetException ex) {
-					Logger.getLogger(ParameterEstimator.class.getName()).log(Level.SEVERE, null, ex);
-				}
+				n.perform_fit();
 			} catch (InterruptedException iie) {
-				System.err.println(iie);
+				Logger.getLogger(ParameterEstimator.class.getName()).log(Level.SEVERE, null, iie);
+				System.exit(0);
+			} catch (Exception ex) {
+				Logger.getLogger(ParameterEstimator.class.getName()).log(Level.SEVERE, null, ex);
 				System.exit(0);
 			}
 
