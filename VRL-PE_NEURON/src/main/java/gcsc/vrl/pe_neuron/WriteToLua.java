@@ -46,14 +46,14 @@ public class WriteToLua {
 //        String resource = classLoader.getResource("paramEst_frame.lua").getFile();
         InputStream resource = classLoader.getResourceAsStream("paramEst_frame.lua");
 
-        System.out.println("HALLLoooooo : "+resource);
+//        System.out.println("HALLLoooooo : "+resource);
         luaFile = new File(path+"paramEst.lua");
 //        System.out.println(luaFile.getCanonicalPath());
         
         
         //FileInputStream fis = new FileInputStream(resource); //hier macht das Plugin Probleme-- eventuell hat das mit der Repraesentation von unserem pathname zu tun
         BufferedReader reader = new BufferedReader(new InputStreamReader(resource));
-        System.out.println("Schafft er das? Oder findet er die Resource immer noch nicht?");
+//        System.out.println("Schafft er das? Oder findet er die Resource immer noch nicht?");
         
         String line; 
         try{
@@ -84,11 +84,11 @@ public class WriteToLua {
         ArrayList<StoreValues> rel_time = modeldata.getTimespan();
         
         String basepath = method_options.getBasePath();
-        System.out.println("BASEPATH = "+basepath);
+//        System.out.println("BASEPATH = "+basepath);
         ArrayList<StoreValues> parameters = params.getParams();
 
         File tmp_out = new File(path+"tmp_output.lua");
-        System.out.println(tmp_out.getCanonicalPath());
+//        System.out.println(tmp_out.getCanonicalPath());
         FileInputStream fis = new FileInputStream(luaFile);
         BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
         

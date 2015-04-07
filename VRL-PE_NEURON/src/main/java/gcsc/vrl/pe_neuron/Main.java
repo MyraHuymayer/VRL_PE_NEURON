@@ -41,12 +41,17 @@ public class Main {
         peo.generateParameterSet("Parameter", 0.104162375070777, 0, 0.5, "kci_new");
         peo.generateParameterSet("Parameter", 0.002318596416033745, 0, 0.004, "kic_new");
         
+        ArrayList<String> str = peo.finishedParamGeneration();
+        
         MethodOptions mo = new MethodOptions();
-        File dir = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/");
+        File dir = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/");
 
-        mo.setPE_Methods("bfgs-sqp-fs", "wolf", 11, 50, dir, 10E-6);
+       HeadLine h = mo.setPE_Methods("bfgs-sqp-fs", "wolf", 11, 50, dir, 10E-6);
         
         ModelManipulation mm = new ModelManipulation();
+        
+        CreateXML xml = new CreateXML();
+        xml.implementPEOptions(h, str, "/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/");
         
         mm.hocFilename("Fig1c1.hoc");
         mm.setNameForOutputFile("Fig1c1", "kv4_OC");
@@ -72,10 +77,10 @@ public class Main {
         
         ArrayList<StoreValues> newList = mm.selectSortTimespans(timespans);
         
-        for(int i = 0; i< newList.size(); i++){
-            System.out.print("Value 1 " + newList.get(i).getValue1()+"; ");
-            System.out.print("Value 2 " + newList.get(i).getValue2()+ "\n");
-        }
+//        for(int i = 0; i< newList.size(); i++){
+//            System.out.print("Value 1 " + newList.get(i).getValue1()+"; ");
+//            System.out.print("Value 2 " + newList.get(i).getValue2()+ "\n");
+//        }
         
         
         //experimental model data 
@@ -85,7 +90,7 @@ public class Main {
         edm.dataFile(datafile);
         
         ParameterEstimator pe = new ParameterEstimator();
-        pe.runParameterEstimator("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/", mm, edm, mo, peo);
+        pe.runParameterEstimator("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/", mm, edm, mo, peo);
         
 //        WriteToLua wtl = new WriteToLua();
 //        wtl.setPath("/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/");

@@ -62,18 +62,18 @@ public class PE_Options implements Serializable{
         
         if(parameter_names.size() >=2){
             for(int ii = 0; ii < parameter_names.size()-1; ii++){
-                System.out.println("Parameter name in Array: "+parameter_names.get(ii)+ "; Parameter name:" +paramName);
+//                System.out.println("Parameter name in Array: "+parameter_names.get(ii)+ "; Parameter name:" +paramName);
                 if(paramName.equals(parameter_names.get(ii))){
                     parameter_names.remove(parameter_names.size()-1);
                     throw new IOException("Error: Parameter names must differ from each other!");
                 }
             }
-            System.out.println("----------------------------------------------------------------------------" );
+//            System.out.println("----------------------------------------------------------------------------" );
         }
         
         
-        System.out.println(parameter_names.get(parameter_names.size()-1));
-        System.out.println("Size of parameter names array list: "+parameter_names.size());
+//        System.out.println(parameter_names.get(parameter_names.size()-1));
+//        System.out.println("Size of parameter names array list: "+parameter_names.size());
         if(min >= parameter){
             throw new IOException("Error: Minimal limit value must be smaller than the parameter value!");
         }
@@ -92,7 +92,7 @@ public class PE_Options implements Serializable{
         }
         
 //        NOTE: wenn man am schluss fertig mit dem Array ist sollte man es loeschen 
-        System.out.println("TEST: Size of array: "+xml_line.size());
+//        System.out.println("TEST: Size of array: "+xml_line.size());
         
     }
     

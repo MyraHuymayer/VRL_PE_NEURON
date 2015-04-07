@@ -28,10 +28,10 @@ public class MethodOptions implements Serializable{
         HeadLine method_info = new HeadLine();
         
         String dd = data_directory.getCanonicalPath();
-        
+
         
         basePath = dd+"/";
-        
+
         //lua script necessary for the parameter estimator --> since the user never has direct access or knowledge of this file, the name is defined here!
         String lua = basePath+"paramEst.lua";
         
@@ -40,8 +40,8 @@ public class MethodOptions implements Serializable{
         tmp = tmp +norm_grad+"\" min_step_abs=\"1.0E-6\" min_step_rel=\"1.0E-5\" verbose=\"false\"/>";
         
         
-          method_info.setHeadline(tmp); //Warum macht er bitte hier Probleme?
-          System.out.println(method_info.getHeadline());
+          method_info.setHeadline(tmp); 
+//          System.out.println(method_info.getHeadline());
         return method_info;
 
     }
