@@ -2,9 +2,18 @@ package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
+import eu.mihosoft.vrl.io.ByteArrayClassLoader;
+import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  *
@@ -34,9 +43,43 @@ public class MethodOptions implements Serializable{
 
         //lua script necessary for the parameter estimator --> since the user never has direct access or knowledge of this file, the name is defined here!
         String lua = basePath+"paramEst.lua";
+        String path2UG = "";
+        URL url;
+        
+        if(VSysUtil.isMacOSX()){
+            url = getClass().getClassLoader().getResource("Mac/ugshell");
+            
+            if(url.getProtocol().endsWith("jar")){
+                String jarPath = url.getPath().substring(5, url.getPath().indexOf("VRL-PE_NEURON.jar!"));
+//                JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+//                Enumeration<JarEntry> entries = jar.entries();
+                System.out.println("#############################"+jarPath);
+                
+                File file = new File(jarPath+"/ugshell");
+                
+                ByteArrayClassLoader bacl = new ByteArrayClassLoader();
+                InputStream in = bacl.getResourceAsStream("Mac/ugshell");
+                Files.copy(in, file.getCanonicalFile().toPath());
+                path2UG = file.getCanonicalPath();
+//                while(entries.hasMoreElements()){
+//                    String name = entries.nextElement().getName();
+//                    if(name.contains("Mac/ugshell")){
+//                        path2UG = name;
+//                        System.out.println("TEST elemente der jar Datei: "+name);
+//                    }
+                    
+//                }
+                
+                System.out.println("path to ugshell: "+path2UG );
+                
+            }else{
+                path2UG = url.getPath();
+                System.out.println("path to ugshell: "+path2UG );
+            }
+        }
         
         String tmp = "<Settings Method=\""+method+"\" LS_Method=\""+ls_method+"\" LS_Steps=\""+ls_steps+"\" Steps=\""+steps+"\" default_search_length=\"1.0\" data_directory=\"";
-        tmp = tmp +basePath+"\" script=\" -ex "+lua+"\" ugshell=\"ugshell\" defect_adjust_abs=\"1.0E-5\" defect_adjust_rel=\"0.15\" norm_grad=\"";
+        tmp = tmp +basePath+"\" script=\" -ex "+lua+"\" ugshell=\""+path2UG+"\" defect_adjust_abs=\"1.0E-5\" defect_adjust_rel=\"0.15\" norm_grad=\"";
         tmp = tmp +norm_grad+"\" min_step_abs=\"1.0E-6\" min_step_rel=\"1.0E-5\" verbose=\"false\"/>";
         
         
