@@ -2,22 +2,17 @@ package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
-import eu.mihosoft.vrl.io.ByteArrayClassLoader;
 import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -53,67 +48,54 @@ public class MethodOptions implements Serializable{
          
         if(VSysUtil.isMacOSX()){
             url = getClass().getClassLoader().getResource("Mac/ugshell");
+            System.out.println("URL: "+url);
+            InputStream input = getClass().getClassLoader().getResourceAsStream("Mac/ugshell");
             
-           //TEST: 
-            String path_ = url.getPath();
-//            File file_ = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/ugshell");
-//            file_.getParentFile().mkdirs();
-//            file_.createNewFile();
-//           
-//            Path pa = file_.getCanonicalFile().toPath();
+            File file_copy = new File(basePath+"ugshell");
             
-//            ByteArrayClassLoader bacl = new ByteArrayClassLoader();
-//            InputStream in = bacl.getResourceAsStream("ugshell");
+            if(!file_copy.exists()){
+                file_copy.createNewFile();
+            }
+            OutputStream outstream = new FileOutputStream(file_copy); 
             
-//            File in = new File(url.getFile());
-//            Path in_ = in.getAbsoluteFile().toPath();
-
+            System.out.println("Worked till here ! And the Resource was found: "+input);        
             
+            IOUtils.copy(input, outstream);
             
-//            if(url.getProtocol().endsWith("jar")){
-//                String jarPath = url.getPath().substring(5, url.getPath().indexOf("VRL-PE_NEURON.jar!"));
-//                JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-//                Enumeration<JarEntry> entries = jar.entries();
-//                System.out.println("#############################"+jarPath);
-                
-//                File file = new File(jarPath+"/ugshell");
-                System.out.println("--------------------------VOR Paths-------------------------- ");
-                Path pa = Paths.get("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/ugshell");
-                System.out.println("--------------------------NACH Paths-------------------------- ");
-                System.out.println("Path given with topath method = "+pa);
-                
-                InputStream in = getClass().getClassLoader().getResourceAsStream("Mac/ugshell");
-                 System.out.println("Was a resource found? "+in);
+            outstream.close();
+            input.close();
             
-                 System.out.println("--------------------------VOR FILES.COPY?-------------------------- ");
-                 Files.copy(in, pa, StandardCopyOption.REPLACE_EXISTING);
-                 System.out.println("KANN ER FILES.COPY? ");
-                 in.close();
-                 
-                 File test = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/ugshell");
-                test.setExecutable(true);
-                if(test.canExecute()){
-                    System.out.println("Datei ist ausfuehrbar!!");
-                 }else{
-                    System.out.println("NOOOOEEEEEE! Datei ist nicht ausfuehrbar!!!");
-                }
-                 path2UG = pa.toString();
-                 System.out.println("path to ug: "+path2UG);
-//                ByteArrayClassLoader bacl = new ByteArrayClassLoader();
-//                InputStream in = bacl.getResourceAsStream("Mac/ugshell");
-//                Files.copy(in, file.getCanonicalFile().toPath());
-//                path2UG = file.getCanonicalPath();
-//                while(entries.hasMoreElements()){
-//                    String name = entries.nextElement().getName();
-//                    if(name.contains("Mac/ugshell")){
-//                        path2UG = name;
-//                        System.out.println("TEST elemente der jar Datei: "+name);
-//                    }
-                    
+            if(!file_copy.canExecute()){
+                file_copy.setExecutable(true);
+            }
+            
+            path2UG = file_copy.getCanonicalPath();            
+//            System.out.println("--------------------------VOR Paths-------------------------- ");
+//            Path pa = Paths.get("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/ugshell");
+//            System.out.println("--------------------------NACH Paths-------------------------- ");
+//            System.out.println("Path given with topath method = "+pa);
+//                
+//            InputStream in = getClass().getClassLoader().getResourceAsStream("Mac/ugshell");
+//            System.out.println("Was a resource found? "+in);
+//            
+//                 System.out.println("--------------------------VOR FILES.COPY?-------------------------- ");
+//                 Files.copy(in, pa, StandardCopyOption.REPLACE_EXISTING);
+//                 System.out.println("KANN ER FILES.COPY? ");
+//                 in.close();
+//                 
+//                 File test = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/ugshell");
+//                test.setExecutable(true);
+//                if(test.canExecute()){
+//                    System.out.println("Datei ist ausfuehrbar!!");
+//                 }else{
+//                    System.out.println("NOOOOEEEEEE! Datei ist nicht ausfuehrbar!!!");
 //                }
-                
-                System.out.println("path to ugshell: "+path2UG );
-                
+//                 path2UG = pa.toString();
+//                 System.out.println("path to ug: "+path2UG);
+//
+//                
+//                System.out.println("path to ugshell: "+path2UG );
+//                
 //            }else{
 //                path2UG = url.getPath();
 //                System.out.println("path to ugshell: "+path2UG );
