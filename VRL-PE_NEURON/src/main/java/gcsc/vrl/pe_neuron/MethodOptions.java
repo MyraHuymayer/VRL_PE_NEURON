@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -42,16 +40,29 @@ public class MethodOptions implements Serializable{
 
         //lua script necessary for the parameter estimator --> since the user never has direct access or knowledge of this file, the name is defined here!
         String lua = basePath+"paramEst.lua";
-        String path2UG = "";
-        URL url;
-        
+        String path2UG = "";        
          
         if(VSysUtil.isMacOSX()){
-            url = getClass().getClassLoader().getResource("Mac/ugshell");
-            System.out.println("URL: "+url);
+            
+            URL url = getClass().getClassLoader().getResource("Mac/ugshell");
             InputStream input = getClass().getClassLoader().getResourceAsStream("Mac/ugshell");
             
-            File file_copy = new File(basePath+"ugshell");
+            if(url.getProtocol().endsWith("jar")){
+                PENPluginConfigurator pen = new PENPluginConfigurator();
+                String folder = pen.getIdentifier().getName();
+                
+                String pathToJar = url.getPath().substring(5, url.getPath().indexOf("VRL-PE_NEURON.jar!"));
+                System.out.println("Can this possibly work??"+folder);
+                folder = pathToJar + "/" + folder + "/resources/";
+                File dir = new File(folder+"Mac");
+                dir.mkdir();
+                path2UG = folder+"Mac/";
+                System.out.println("Folder path "+folder);
+            }else{
+                //this is only relevant when tested independently from ug and should be removed later
+                path2UG = basePath;
+            }
+            File file_copy = new File(path2UG+"ugshell");
             
             if(!file_copy.exists()){
                 file_copy.createNewFile();
@@ -70,36 +81,7 @@ public class MethodOptions implements Serializable{
             }
             
             path2UG = file_copy.getCanonicalPath();            
-//            System.out.println("--------------------------VOR Paths-------------------------- ");
-//            Path pa = Paths.get("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/ugshell");
-//            System.out.println("--------------------------NACH Paths-------------------------- ");
-//            System.out.println("Path given with topath method = "+pa);
-//                
-//            InputStream in = getClass().getClassLoader().getResourceAsStream("Mac/ugshell");
-//            System.out.println("Was a resource found? "+in);
-//            
-//                 System.out.println("--------------------------VOR FILES.COPY?-------------------------- ");
-//                 Files.copy(in, pa, StandardCopyOption.REPLACE_EXISTING);
-//                 System.out.println("KANN ER FILES.COPY? ");
-//                 in.close();
-//                 
-//                 File test = new File("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/ugshell");
-//                test.setExecutable(true);
-//                if(test.canExecute()){
-//                    System.out.println("Datei ist ausfuehrbar!!");
-//                 }else{
-//                    System.out.println("NOOOOEEEEEE! Datei ist nicht ausfuehrbar!!!");
-//                }
-//                 path2UG = pa.toString();
-//                 System.out.println("path to ug: "+path2UG);
-//
-//                
-//                System.out.println("path to ugshell: "+path2UG );
-//                
-//            }else{
-//                path2UG = url.getPath();
-//                System.out.println("path to ugshell: "+path2UG );
-//            }
+
         }
         
         String tmp = "<Settings Method=\""+method+"\" LS_Method=\""+ls_method+"\" LS_Steps=\""+ls_steps+"\" Steps=\""+steps+"\" default_search_length=\"1.0\" data_directory=\"";
