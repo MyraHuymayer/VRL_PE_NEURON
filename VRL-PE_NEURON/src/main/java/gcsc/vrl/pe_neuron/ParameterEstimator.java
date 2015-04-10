@@ -6,7 +6,6 @@ import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,6 +22,16 @@ public class ParameterEstimator implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+        /**
+         * run the parameter estimator 
+         * @param path basepath
+         * @param modeldata Implementations concerning the NEURON model, such as the relevant time range, units, the number of timesteps etc
+         * @param expdata Implementations concerning the experimental data, e.g. the units
+         * @param options Options concerning the methods used in the parameter estimator itself
+         * @param param_properties Options concerning the parameters that are to be estimated
+         * @throws IOException
+         * @throws ParserConfigurationException 
+         */
 	@SuppressWarnings("UseSpecificCatch")
 	public void runParameterEstimator(String path,
 		ModelManipulation modeldata,

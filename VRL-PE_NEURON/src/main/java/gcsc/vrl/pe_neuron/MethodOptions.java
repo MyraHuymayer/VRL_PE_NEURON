@@ -1,6 +1,7 @@
 package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
+import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.File;
@@ -23,7 +24,19 @@ public class MethodOptions implements Serializable{
     
 //    private transient HeadLine method_info = new HeadLine();
     private String basePath;
+    private String path2UG;
     
+    /**
+     * Create the first element (element name = Settings) of the XML-file, needed for the parameter estimator
+     * @param method Method name that can be choosen in drop down menu in VRL Studio (at the moment only bfgs-fs-sqp can be chosen, calling the gradient method -NOTE that the name has to be changed some time in the future)
+     * @param ls_method Line search method that is chosen in a drop down menu: wolf, primitive post projection or primitive pre projection
+     * @param ls_steps number of steps performed by the linesearch method
+     * @param steps number of steps 
+     * @param data_directory data directory that can be choosen by a load folder dialog and gives the basepath where all files will be stored and main action will take place
+     * @param norm_grad norm gradient, normally set to 1e-6
+     * @return String that is stored in a HeadLine object, containing all relevant method data required by the xml file
+     * @throws IOException 
+     */
     public HeadLine setPE_Methods(@ParamInfo(name ="", style="selection", options="value=[\"bfgs-sqp-fs\"]")String method,
             @ParamInfo(name ="", style="selection", options="value=[\"wolf\", \"primitive_post_projection\", \"primitive_pre_projection\"]") String ls_method,
             @ParamInfo(name ="Number of line search steps", options="value=11")int ls_steps, 
@@ -40,7 +53,7 @@ public class MethodOptions implements Serializable{
 
         //lua script necessary for the parameter estimator --> since the user never has direct access or knowledge of this file, the name is defined here!
         String lua = basePath+"paramEst.lua";
-        String path2UG = "";        
+        path2UG = "";        
          
         if(VSysUtil.isMacOSX()){
             
@@ -62,6 +75,7 @@ public class MethodOptions implements Serializable{
                 //this is only relevant when tested independently from ug and should be removed later
                 path2UG = basePath;
             }
+            
             File file_copy = new File(path2UG+"ugshell");
             
             if(!file_copy.exists()){
@@ -69,7 +83,7 @@ public class MethodOptions implements Serializable{
             }
             OutputStream outstream = new FileOutputStream(file_copy); 
             
-            System.out.println("Worked till here ! And the Resource was found: "+input);        
+//            System.out.println("Worked till here ! And the Resource was found: "+input);        
             
             IOUtils.copy(input, outstream);
             
@@ -86,7 +100,7 @@ public class MethodOptions implements Serializable{
         
         String tmp = "<Settings Method=\""+method+"\" LS_Method=\""+ls_method+"\" LS_Steps=\""+ls_steps+"\" Steps=\""+steps+"\" default_search_length=\"1.0\" data_directory=\"";
         tmp = tmp +basePath+"\" script=\" -ex "+lua+"\" ugshell=\""+path2UG+"\" defect_adjust_abs=\"1.0E-5\" defect_adjust_rel=\"0.15\" norm_grad=\"";
-        tmp = tmp +norm_grad+"\" min_step_abs=\"1.0E-6\" min_step_rel=\"1.0E-5\" verbose=\"false\"/>";
+        tmp = tmp +norm_grad+"\" min_step_abs=\"1.0E-6\" min_step_rel=\"1.0E-5\" verbose=\"true\"/>";
         
         
           method_info.setHeadline(tmp); 
@@ -98,4 +112,15 @@ public class MethodOptions implements Serializable{
     public String getBasePath(){
         return basePath;
     }
+    
+    /**
+     * method to get the path of the ugshell binary; this should not be known by the user 
+     * @return 
+     */
+    @MethodInfo(noGUI = true)
+    public String getPath2UG() {
+        return path2UG;
+    }
+    
+    
 }

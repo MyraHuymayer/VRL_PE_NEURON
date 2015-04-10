@@ -1,8 +1,5 @@
 -- load ug script util
-path_to_ug = "/Users/myra/Documents/workspace/ug4" --[##$$ PATHUG $#]
-ug_load_script(path_to_ug.."/scripts/ug_util.lua") --path not correct!!!
-ug_load_script(path_to_ug.."/scripts/util/gnuplot.lua") --path not correct!!!
-
+ug_load_script("ug_util.lua")
 
 -- script name 
 scriptname = debug.getinfo(1).short_src
@@ -144,6 +141,7 @@ AssertPluginsLoaded( {"MembranePotentialMapping"} )
 
 -- hoc setup
 --base_path = "path"
+ug_path = --[##$$ PATHUG_String $$##]--
 path = --[##$$ PATH_String $$##]--
 base_path = util.GetParam("-base_path", path, "Base path to project")
 
@@ -183,7 +181,7 @@ str = parameter_file_name
 
 i1, j1 = string.find(str, "min_" , 12)
 i2, j2 =  string.find(str, "plus_" , 12)
-i3, j3 = string.find(str, "wolf_" , 12)
+i3, j3 = string.find(str, "wolf" , 12)
 i4, j4 = string.find(str, "_z_" , 12)
 
 print("i3 = ",i3)
@@ -317,7 +315,7 @@ end
 voltage_step = vs 
 
 
-filename_Model = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe..""..voltage_step..""..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
+filename_Model = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe..""..voltage_step..""..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
 removeFirstLine( filename_Model )
 timeModel, currentModel = readFromFile(filename_Model, 1)
 
@@ -398,7 +396,7 @@ if common_file_name~="" then
 end	
 
 os.remove(filename_Model)
-fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
+fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
 os.remove(fn_dummy_step)
-fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
+fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
 os.remove(fn_dummy_step) 

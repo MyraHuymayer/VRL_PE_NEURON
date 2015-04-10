@@ -84,6 +84,9 @@ public class WriteToLua {
         ArrayList<StoreValues> rel_time = modeldata.getTimespan();
         
         String basepath = method_options.getBasePath();
+        String path2ug = method_options.getPath2UG();
+        path2ug = path2ug.substring(1, path2ug.indexOf("ugshell"));
+        System.out.println("path to ug: " +path2ug);
 //        System.out.println("BASEPATH = "+basepath);
         ArrayList<StoreValues> parameters = params.getParams();
 
@@ -102,6 +105,9 @@ public class WriteToLua {
             while((line = reader.readLine()) != null){
                 if(line.contains("--[##$$ HOCFILE_String $$##]--")){
                     line = line.replace("--[##$$ HOCFILE_String $$##]--", "\""+hocFile+"\"");
+                    writer.write(line+"\n");
+                }else if(line.contains("--[##$$ PATHUG_String $$##]--")){
+                    line = line.replace("--[##$$ PATHUG_String $$##]--", "\""+path2ug+"\"");
                     writer.write(line+"\n");
                 }else if(line.contains("--[##$$ PATH_String $$##]--")){
                     line = line.replace("--[##$$ PATH_String $$##]--", "\""+basepath+"/\"");
@@ -160,7 +166,7 @@ public class WriteToLua {
                 }else if(line.contains("--[##$$ FUNC_convertUnits_ED $$##]-- ")){
                     writer.write("timeData = convertUnits(timeData,"+expdata.getExponents()[0]+")\n");
                     writer.write("currentData = convertUnits(currentData,"+expdata.getExponents()[1]+")\n");
-                }else if(line.contains("--[##$$ MODEL_FILENAME_PART1 $$##]--") && line.contains("--[##$$ MODEL_FILENAME_PART2 $#]--")){
+                }else if(line.contains("--[##$$ MODEL_FILENAME_PART1 $$##]--") && line.contains("--[##$$ MODEL_FILENAME_PART2 $#]--") ){
                     line = line.replace("--[##$$ MODEL_FILENAME_PART1 $$##]--", modeldata.getOut_part1());
                     line = line.replace("--[##$$ MODEL_FILENAME_PART2 $#]--",modeldata.getOut_part2());
                     writer.write(line+"\n");
