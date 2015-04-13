@@ -1,13 +1,6 @@
--- load ug script util
-ug_load_script("ug_util.lua")
-
--- script name 
-scriptname = debug.getinfo(1).short_src
-print("Executing script: " .. scriptname)
-
-
--- check if plugins are loaded for NEURON 
-AssertPluginsLoaded( {"MembranePotentialMapping"} )
+HocInterpreter = Transformator()
+-- load custom lua script that serves as a replacement for ug_util
+dofile("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/VRL-PE_NEURON/src/main/resources/myfunctions.lua")
 
 -----------------------------------------------------------------------
 -- FUNCTIONS
@@ -143,23 +136,23 @@ AssertPluginsLoaded( {"MembranePotentialMapping"} )
 --base_path = "path"
 ug_path = --[##$$ PATHUG_String $$##]--
 path = --[##$$ PATH_String $$##]--
-base_path = util.GetParam("-base_path", path, "Base path to project")
+base_path = GetParam("-base_path", path)
 
 hoc_file = --[##$$ HOCFILE_String $$##]--
-hoc_geom_ = util.GetParam("-hoc_geom", hoc_file)
+hoc_geom_ = GetParam("-hoc_geom", hoc_file)
 hoc_geom = base_path .. hoc_geom_
 
-hoc_dt = util.GetParamNumber("-hoc_dt", 2.5e-5)
-hoc_tstop = util.GetParamNumber("-hoc_tstop", 2.69995)
-hoc_finitialize = util.GetParamNumber("-hoc_finitialize", -40.0)
+hoc_dt = GetParamNumber("-hoc_dt", 2.5e-5)
+hoc_tstop = GetParamNumber("-hoc_tstop", 2.69995)
+hoc_finitialize = GetParamNumber("-hoc_finitialize", -40.0)
 
 
 -----------------------------------------------------------------
 -- Interface for parameter_estimation algorithm
 -----------------------------------------------------------------
-common_file_name= util.GetParam ("-common_file","") 
-data_directory= util.GetParam ("-data_directory","") 
-parameter_file_name = util.GetParam ("-parameter_file","")
+common_file_name= GetParam ("-common_file","") 
+data_directory= GetParam ("-data_directory","") 
+parameter_file_name = GetParam ("-parameter_file","")
 		
 -----------------------------------------------------------------
 -- set variables relevant for the file naming conventions 
@@ -184,8 +177,7 @@ i2, j2 =  string.find(str, "plus_" , 12)
 i3, j3 = string.find(str, "wolf" , 12)
 i4, j4 = string.find(str, "_z_" , 12)
 
-print("i3 = ",i3)
-print("parameter file name = ", str)
+
 num1 = string.len(str) - 5
 num2 = string.len(str) - 4
 
@@ -261,9 +253,6 @@ if parameter_file_name~="" then
 	outputname = string.sub (str, 12, num)
 	end
 				
-print("kic_new = ", kic_new)	
-		
-print(" parameter_file  = " .. parameter_file_name)
 		
 -- create neuron instance (java PE <-> ugshell -> NEURON -> mod file wird geladen)
 HocInterpreter = Transformator()
@@ -287,7 +276,6 @@ HocInterpreter = Transformator()
 		end 
 		
 		
-		print("Voltage-step = ", HocInterpreter:get_hoc_variable("voltage_step"))
 		if hoc_step == 1 then 
 			--set the variables for the parameter (ls_param), the wolfe step and the zoom step
 			HocInterpreter:execute_hoc_stmt("ls_param ="..ls_param.."")
