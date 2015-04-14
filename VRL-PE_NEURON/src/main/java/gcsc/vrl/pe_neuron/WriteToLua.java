@@ -110,7 +110,7 @@ public class WriteToLua {
                     line = line.replace("--[##$$ PATHUG_String $$##]--", "\""+path2ug+"\"");
                     writer.write(line+"\n");
                 }else if(line.contains("--[##$$ PATH_String $$##]--")){
-                    line = line.replace("--[##$$ PATH_String $$##]--", "\""+basepath+"/\"");
+                    line = line.replace("--[##$$ PATH_String $$##]--", "\""+basepath+"\"");
                     writer.write(line+"\n");
                 }else if(line.contains("--[##$$ VAR_NAME = VAR_Double $$##]--")){
                     if(!nVar.isEmpty()){

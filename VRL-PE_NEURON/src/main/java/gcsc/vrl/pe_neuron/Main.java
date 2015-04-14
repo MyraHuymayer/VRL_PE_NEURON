@@ -41,6 +41,7 @@ public class Main {
         peo.generateParameterSet("Parameter", 0.104162375070777, 0, 0.5, "kci_new");
         peo.generateParameterSet("Parameter", 0.002318596416033745, 0, 0.004, "kic_new");
         
+        peo.storeParameters("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/Output/store_test1.xml");
         ArrayList<String> str = peo.finishedParamGeneration();
         
         MethodOptions mo = new MethodOptions();
