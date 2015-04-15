@@ -47,6 +47,14 @@ public class PENPluginConfigurator extends VPluginConfigurator{
     @Override
     public void init(InitPluginAPI iApi){
         //nothing to init
+
     }
+
+    @Override
+    public void install(InitPluginAPI iApi) {
+       iApi.getResourceFolder();
+    }
+    
+    
 
 }

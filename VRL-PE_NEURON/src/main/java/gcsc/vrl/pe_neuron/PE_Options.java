@@ -26,15 +26,13 @@ import param_est.save_load;
 public class PE_Options implements Serializable{
     
     private static final long serialVersionUID = 1L;
-//    private File paramEst;
     private ArrayList<String> parameter_names =new ArrayList<String>();
-//    parameter_names = 
     private ArrayList<String> xml_line = new ArrayList<String>();
     private ArrayList<String> type = new ArrayList<String>();
     
     private transient ArrayList<StoreValues> params = new ArrayList<StoreValues>();
      
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     
 
 //    was muss abgefangen werden? 
@@ -124,10 +122,20 @@ public class PE_Options implements Serializable{
      * delete all elements from the parameterNames
      */
     public void clearParameters(){
-        parameter_names.clear();
-        xml_line.clear();
-        type.clear();
-        params.clear();
+        if(!parameter_names.isEmpty() && parameter_names != null){     
+            parameter_names.clear();
+        }
+        
+        if(!xml_line.isEmpty() && xml_line !=null){
+            xml_line.clear();
+        }
+        
+        if(!type.isEmpty() && type != null){
+            type.clear();
+        }
+        if(!params.isEmpty() && params != null){
+            params.clear();
+        }
     }
     
     /**
@@ -146,14 +154,16 @@ public class PE_Options implements Serializable{
    }
    public void deleteByName(@ParamInfo(name = "Parameter name") String paramName){
        
-       for(int i = 0; i< parameter_names.size(); i++){
-           if(paramName.equals(parameter_names.get(i))){
-               xml_line.remove(i);
-               parameter_names.remove(i);
-               params.remove(i);
-               type.remove(i);
-               System.out.println("Parameter removed :)!");
-           }
+       if(parameter_names != null){
+            for(int i = 0; i< parameter_names.size(); i++){
+                if(paramName.equals(parameter_names.get(i))){
+                    xml_line.remove(i);
+                    parameter_names.remove(i);
+                    params.remove(i);
+                    type.remove(i);
+                    System.out.println("Parameter removed :)!");
+                }
+            }
        }
        
    }

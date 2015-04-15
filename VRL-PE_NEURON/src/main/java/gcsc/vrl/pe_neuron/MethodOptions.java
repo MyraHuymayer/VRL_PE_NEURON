@@ -3,6 +3,9 @@ package gcsc.vrl.pe_neuron;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
+import eu.mihosoft.vrl.io.IOUtil;
+import eu.mihosoft.vrl.io.VJarUtil;
+import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,6 +50,8 @@ public class MethodOptions implements Serializable{
         HeadLine method_info = new HeadLine();
         
         String dd = data_directory.getCanonicalPath();
+        
+        
 
         
         basePath = dd+"/";
@@ -61,6 +66,19 @@ public class MethodOptions implements Serializable{
             InputStream input = getClass().getClassLoader().getResourceAsStream("Mac/ugshell");
             
             if(url.getProtocol().endsWith("jar")){
+                
+                
+                InputStream is = getClass().getResourceAsStream(VSysUtil.getSystemBinaryPath()+"/ugshell");
+                
+                File tmpDir = IOUtil.createTempDir();
+                
+                if (is!=null) {
+                    // read ugshell binary
+                } else {
+                    // error, platform not supported!
+                }
+                
+                
                 PENPluginConfigurator pen = new PENPluginConfigurator();
                 String folder = pen.getIdentifier().getName();
                 
@@ -71,6 +89,9 @@ public class MethodOptions implements Serializable{
                 dir.mkdir();
                 path2UG = folder+"Mac/";
                 System.out.println("Folder path "+folder);
+                
+                VRL.getPropertyFolderManager().getResourcesFolder();
+                
             }else{
                 //this is only relevant when tested independently from ug and should be removed later
                 path2UG = basePath;
