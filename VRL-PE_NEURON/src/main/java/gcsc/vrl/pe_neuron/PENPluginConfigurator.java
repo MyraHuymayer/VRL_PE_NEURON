@@ -20,7 +20,8 @@ import java.util.logging.Logger;
  */
 public class PENPluginConfigurator extends VPluginConfigurator{
     
-    private File binaryCopy; 
+    private File binaryCopy;
+    private File binaryLibCopy;
     
     public PENPluginConfigurator(){
         //specification of plugin name and version
@@ -64,12 +65,23 @@ public class PENPluginConfigurator extends VPluginConfigurator{
     @Override
     public void install(InitPluginAPI iApi) {
         binaryCopy = new File(iApi.getResourceFolder(), "ugshell"); 
+      //NOTE: Maybe this should be handled with IOUtils.copyFile(source, destination)
+        if(VSysUtil.isMacOSX()){
+            binaryLibCopy = new File(iApi.getResourceFolder(), "libug4.dylib");
+        }else if(VSysUtil.isLinux()){
+            // >> Not yet supported 
+        }else if(VSysUtil.isWindows()){
+            // >> Not yet supported 
+        }else{
+            System.err.println("Error: Used platform is not supported! ");
+        }
         saveBinary();
         setExecutable(binaryCopy);
+        saveBinaryLib();
     }
     
     private void saveBinary(){
-        //irgendwas stimmt mit dieser Methode noch nicht! Das muss ich nochmal testen! 
+        
         InputStream is = getClass().getClassLoader().getResourceAsStream(
                 VSysUtil.getSystemBinaryPath()+"ugshell");
         
@@ -79,6 +91,24 @@ public class PENPluginConfigurator extends VPluginConfigurator{
             Logger.getLogger(VRLPlugin.class.getName()).log(Level.SEVERE, null, ex);
         }catch(IOException ex){
             Logger.getLogger(VRLPlugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void saveBinaryLib(){
+//        Different platforms have different naming conventions. Windows platforms append .DLL to the library name, such as OLE32.DLL. 
+//        Linux platforms use a lib prefix and a .so suffix. 
+//        Mac OS X platforms have a lib prefix and a .dylib suffix.
+//        Info from: http://www.mono-project.com/docs/advanced/pinvoke/
+        if(VSysUtil.isMacOSX()){
+            InputStream is = getClass().getClassLoader().getResourceAsStream(VSysUtil.getSystemBinaryPath()+"libug4.dylib");
+            
+            try{
+                IOUtil.saveStreamToFile(is, binaryLibCopy);
+            }catch(FileNotFoundException ex){
+                Logger.getLogger(VRLPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            }catch(IOException ex){
+                Logger.getLogger(VRLPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     

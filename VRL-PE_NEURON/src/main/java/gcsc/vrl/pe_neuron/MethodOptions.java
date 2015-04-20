@@ -5,6 +5,7 @@ import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
+import eu.mihosoft.vrl.system.PluginDataController;
 import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.File;
@@ -59,65 +60,76 @@ public class MethodOptions implements Serializable{
         //lua script necessary for the parameter estimator --> since the user never has direct access or knowledge of this file, the name is defined here!
         String lua = basePath+"paramEst.lua";
         path2UG = "";        
-         
-        if(VSysUtil.isMacOSX()){
-            
-            URL url = getClass().getClassLoader().getResource("Mac/ugshell");
-            InputStream input = getClass().getClassLoader().getResourceAsStream("Mac/ugshell");
-            
-            if(url.getProtocol().endsWith("jar")){
-                
-                
-                InputStream is = getClass().getResourceAsStream(VSysUtil.getSystemBinaryPath()+"/ugshell");
-                
-                File tmpDir = IOUtil.createTempDir();
-                
-                if (is!=null) {
-                    // read ugshell binary
-                } else {
-                    // error, platform not supported!
-                }
-                
-                
-                PENPluginConfigurator pen = new PENPluginConfigurator();
-                String folder = pen.getIdentifier().getName();
-                
-                String pathToJar = url.getPath().substring(5, url.getPath().indexOf("VRL-PE_NEURON.jar!"));
-                System.out.println("Can this possibly work??"+folder);
-                folder = pathToJar + "/" + folder + "/resources/";
-                File dir = new File(folder+"Mac");
-                dir.mkdir();
-                path2UG = folder+"Mac/";
-                System.out.println("Folder path "+folder);
-                
-                VRL.getPropertyFolderManager().getResourcesFolder();
-                
-            }else{
-                //this is only relevant when tested independently from ug and should be removed later
-                path2UG = basePath;
-            }
-            
-            File file_copy = new File(path2UG+"ugshell");
-            
-            if(!file_copy.exists()){
-                file_copy.createNewFile();
-            }
-            OutputStream outstream = new FileOutputStream(file_copy); 
-            
-//            System.out.println("Worked till here ! And the Resource was found: "+input);        
-            
-            IOUtils.copy(input, outstream);
-            
-            outstream.close();
-            input.close();
-            
-            if(!file_copy.canExecute()){
-                file_copy.setExecutable(true);
-            }
-            
-            path2UG = file_copy.getCanonicalPath();            
+        
+        PENPluginConfigurator pc = new PENPluginConfigurator();
+        
+        PluginDataController controller = new PluginDataController(pc);
+        path2UG = controller.getResourceFolder() + "/ugshell";
 
-        }
+////        NOTE: We only need the path to ugshell in the resources folder of the plugin: probably all code following is unnecessary!! 
+        
+//        if(VSysUtil.isMacOSX()){
+//            
+//            URL url = getClass().getClassLoader().getResource("bin/osx/ugshell");
+//            InputStream input = getClass().getClassLoader().getResourceAsStream("bin/osx/ugshell");
+//            
+//            
+//            InputStream is = getClass().getClassLoader().getResourceAsStream(VSysUtil.getSystemBinaryPath()+"/ugshell"); //NOTE: das funktioniert wahrscheinlich nur in der VRL, nicht wenn es in der Main getested wird
+//            System.out.println("Resource was found: "+is);
+//            if(url.getProtocol().endsWith("jar")){
+//                
+//                
+//               
+//                
+//                System.out.println("####################### System Binary PATH: "+ VSysUtil.getSystemBinaryPath()+"ugshell" );
+//                File tmpDir = IOUtil.createTempDir();
+//                
+//                if (is!=null) {
+//                    // read ugshell binary
+//                } else {
+//                    // error, platform not supported!
+//                }
+//                
+//                
+//                PENPluginConfigurator pen = new PENPluginConfigurator();
+//                String folder = pen.getIdentifier().getName();
+//                
+//                String pathToJar = url.getPath().substring(5, url.getPath().indexOf("VRL-PE_NEURON.jar!"));
+////                System.out.println("Can this possibly work??"+folder);
+//                folder = pathToJar + "" + folder + "/resources/";
+//                File dir = new File(folder+"Mac");
+//                dir.mkdir();
+//                path2UG = folder+"Mac/";
+//                System.out.println("Folder path "+folder);
+//                
+//                VRL.getPropertyFolderManager().getResourcesFolder();
+//                
+//            }else{
+//                //this is only relevant when tested independently from ug and should be removed later
+//                path2UG = basePath;
+//            }
+//            
+//            File file_copy = new File(path2UG+"ugshell");
+//            
+//            if(!file_copy.exists()){
+//                file_copy.createNewFile();
+//            }
+//            OutputStream outstream = new FileOutputStream(file_copy); 
+//            
+////            System.out.println("Worked till here ! And the Resource was found: "+input);        
+//            
+//            IOUtils.copy(input, outstream);
+//            
+//            outstream.close();
+//            input.close();
+//            
+//            if(!file_copy.canExecute()){
+//                file_copy.setExecutable(true);
+//            }
+//            
+//            path2UG = file_copy.getCanonicalPath();            
+//
+//        }
         
         String tmp = "<Settings Method=\""+method+"\" LS_Method=\""+ls_method+"\" LS_Steps=\""+ls_steps+"\" Steps=\""+steps+"\" default_search_length=\"1.0\" data_directory=\"";
         tmp = tmp +basePath+"\" script=\" -ex "+lua+"\" ugshell=\""+path2UG+"\" defect_adjust_abs=\"1.0E-5\" defect_adjust_rel=\"0.15\" norm_grad=\"";
