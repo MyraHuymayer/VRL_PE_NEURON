@@ -157,10 +157,10 @@ parameter_file_name = GetParam ("-parameter_file","")
 -----------------------------------------------------------------
 -- set variables relevant for the file naming conventions 
 -----------------------------------------------------------------
-vs = 1   
-wolfe = 0
-zoom = 0
-ls_param = 0
+vs = 99   
+wolfe = 99
+zoom = 99
+ls_param = 99
 
 
 
@@ -172,68 +172,33 @@ ls_param = 0
 
 str = parameter_file_name
 
-i1, j1 = string.find(str, "min_" , 12)
-i2, j2 =  string.find(str, "plus_" , 12)
-i3, j3 = string.find(str, "wolf" , 12)
-i4, j4 = string.find(str, "_z_" , 12)
+i1, _ = string.find(str, "min_" , 1)
+i2, _ = string.find(str, "plus_" , 1)
+i3, _ = string.find(str, "wolf" , 1)
+i4, _ = string.find(str, "_z_" , 1)
 
 
-num1 = string.len(str) - 5
-num2 = string.len(str) - 4
+if i1 ~= nil then
+	_, _, ls_param = string.find(str, "min_(%d+)" , 1)
+	_, _, vs = string.find(str, "param_(%d+)" , 1)
 
--- set the variable for the parameter 
-if i1 == nil and j1 == nil and  i2 == nil and j2 == nil then 
-	ls_param = 99
+elseif i2 ~= nil then
+	_, _, ls_param = string.find(str, "plus_(%d+)" , 1)
+	_, _, vs = string.find(str, "param_(%d+)" , 1)
 	
-elseif i1 ~= nil and j1 ~= nil then
-	local _start = j1 + 1
-	local _end = j1 + 2
-	ls_param = tonumber(string.sub(str, _start , _end ))
-	
-	--if only one digit
-	if ls_param == nil then 
-		ls_param = tonumber(string.sub(str, _start , _start ))
-		end 
-	
-	vs = 2
-	
-elseif i2 ~= nil and j2 ~= nil then
-	 local _start = j2 + 1
-	 local _end = j2 + 2
-	 
-	 ls_param = tonumber(string.sub(str, _start , _end ))
-	--if only one digit
-	if ls_param == nil then 
-		ls_param = tonumber(string.sub(str, _start , _start ))
-		end
-		 
-	vs = 3
-end  
+else 
+	ls_param = 99 
+	_, _, vs = string.find(str, "param_(%d+)" , 1)
+end
 
---set the variable wolfe
-if i3 ~= nil and j3 ~= nil then 
-	local _start = j3 + 1
-	local _end = j3 + 2
-	
-	wolfe = tonumber(string.sub(str, _start , _end ))
-	
-	if wolfe == nil then 
-		wolfe = tonumber(string.sub(str, _start , _start))
-	end 
-	
-end 
+if i3 ~= nil then
+	_, _, wolfe, vs = string.find(str, "param_wolf(%d+)_(%d+)" , 1)
+else wolfe = 99 end
 
-if i4 ~= nil and j4 ~= nil then 
-	local _start = j4 + 1
-	local _end = j4 + 2
-	
-	zoom = tonumber(string.sub(str, _start , _end ))
-	
-	if zoom == nil then 
-		zoom = tonumber(string.sub(str, _start , _start))
-	end 
-	
-end 
+if i4 ~= nil then 
+	_, _, zoom = string.find(str, "_z_(%d+)" , 1)
+else zoom = 99 end
+
 
 -----------------------------------------------------------------
 -- Set Default Parameters 
@@ -269,15 +234,9 @@ HocInterpreter = Transformator()
 		--[##$$ SET_PARAMETERS_HERE $$##]--
 		--e.g.: HocInterpreter:execute_hoc_stmt("a_new ="..a_new.."")
 
-		if vs ~= 1 then 
-			HocInterpreter:execute_hoc_stmt("voltage_step ="..vs.."")
-		else 
-			HocInterpreter:execute_hoc_stmt("voltage_step ="..hoc_step.."")
-		end 
-		
-		
 		if hoc_step == 1 then 
-			--set the variables for the parameter (ls_param), the wolfe step and the zoom step
+			--set the variables for the parameter (ls_param), the wolfe step, the voltage_step and the zoom step
+			HocInterpreter:execute_hoc_stmt("voltage_step ="..vs.."")
 			HocInterpreter:execute_hoc_stmt("ls_param ="..ls_param.."")
 			HocInterpreter:execute_hoc_stmt("wolf ="..wolfe.."")
 			HocInterpreter:execute_hoc_stmt("zoom ="..zoom.."")
@@ -299,11 +258,9 @@ end
 -- Provide Model Solutions
 -----------------------------------------------------------------
 
---"voltage_step" should match between model text file name (Fig1c_kv4_voltageClamp_P1_1.txt) and exp. data text file name (Trace_1_9_1_1.txt)
-voltage_step = vs 
 
 
-filename_Model = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe..""..voltage_step..""..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
+filename_Model = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe.."_"..voltage_step.."_"..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
 removeFirstLine( filename_Model )
 timeModel, currentModel = readFromFile(filename_Model, 1)
 
@@ -384,7 +341,7 @@ if common_file_name~="" then
 end	
 
 os.remove(filename_Model)
-fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_000_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
+fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_0_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
 os.remove(fn_dummy_step)
-fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0"..voltage_step.."0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
+fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_"..voltage_step.."_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
 os.remove(fn_dummy_step) 

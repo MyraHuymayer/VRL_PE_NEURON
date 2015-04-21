@@ -45,40 +45,6 @@ tstop =2699.95
 v_init = -40
 KMULTP = 30.4e-9 //15.4e-9// 63.4e-9 /*value from dissertation: 15.4e-9*/
 
-/*a_new = 7
-za_new = 0.315646648
-b_new = .090
-zb_new =-2.062276	// -1.23733656
-c_new = 1.01216107
-zc_new = 0.500095665
-d_new = 2.498881 //1.4993286		
-zd_new = -1.1546687
-k_new = 7.69049072			
-zk_new = 0.05502051
-l_new = 4.38562354			
-zl_new = -0.07092366 
-f_new = 0.277130485
-q_new = 1.01314807	
-kci_new = 0.121900093
-kic_new =  0.0017935468 
-
-a_new = 10.648768402428464
-za_new = 0.16476952304755
-b_new = 0.0469805625
-zb_new = -1.2476746167033783
-c_new = 1.554841597158428
-zc_new = 0.261053062727906
-d_new = 2.1885024026245166
-zd_new = -0.9645992200897386
-k_new = 8.97932084773197
-zk_new = 0.0388578913093126 
-//l_new = 4.590108740398876
-l_new = 3.55
-zl_new =  -0.0677680004028726
-f_new = 0.22459429461560684
-q_new = 1.2776528608687405
-kci_new = 0.10416237507077701
-kic_new = 0.002318596416033745 */
 
 a_new = 10.6487684024285
 za_new = 0.16476952304755
@@ -190,25 +156,26 @@ run()
 g.flush()
 
 
-voltage_step = 0
+voltage_step = 99
 ls_param = 99
-zoom = 0
-wolf = 0
+zoom = 99
+wolf = 99
 // voltage_step = vc.amp3
-strdef name, name2, name3, ending, str3, str4 
+strdef name, name2, separator, ending, str3
 objref tempmatrix
 //data saved to text file 
 objref savdata
 
 
 proc writefile(){
-	//name = "/Users/myra/NEURON-Projects/HH_ATypeCurrent_One_Compartmental_Model/Output_MARKOV/Gmax_63.4/Fig1c1_"   /*this is just for the sake of comparison with the HH OCM*/
- name = "/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/Fig1c1_"
-// name = "Fig1c1_"
+//name = "/Users/myra/NEURON-Projects/HH_ATypeCurrent_One_Compartmental_Model/Output_MARKOV/Gmax_63.4/Fig1c1_"   /*this is just for the sake of comparison with the HH OCM*/
+// name = "/Users/myra/NEURON-Projects/Parameter_Estimation/One_Compartmental_Model_AType_current/Fig1c1_"
+  name = "Fig1c1_"
   name2 = "_kv4_OC_"
+  separator = "_"
   ending = ".txt"
   
-  sprint(str3, "%s%g%g%g%s%g%s",name,wolf,voltage_step, zoom, name2,ls_param,ending) 
+  sprint(str3, "%s%g%s%g%s%g%s%g%s",name,wolf,separator,voltage_step,separator, zoom, name2,ls_param,ending) 
   savdata = new File()
   savdata.wopen(str3)
 		

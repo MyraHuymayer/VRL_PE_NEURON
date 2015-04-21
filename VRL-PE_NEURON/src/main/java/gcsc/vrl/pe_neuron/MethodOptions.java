@@ -2,20 +2,12 @@ package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
+import eu.mihosoft.vrl.annotation.OutputInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
-import eu.mihosoft.vrl.io.IOUtil;
-import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.system.PluginDataController;
-import eu.mihosoft.vrl.system.VRL;
-import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.URL;
-import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -41,6 +33,7 @@ public class MethodOptions implements Serializable{
      * @return String that is stored in a HeadLine object, containing all relevant method data required by the xml file
      * @throws IOException 
      */
+    @OutputInfo(name="MethodInfo")
     public HeadLine setPE_Methods(@ParamInfo(name ="", style="selection", options="value=[\"bfgs-sqp-fs\"]")String method,
             @ParamInfo(name ="", style="selection", options="value=[\"wolf\", \"primitive_post_projection\", \"primitive_pre_projection\"]") String ls_method,
             @ParamInfo(name ="Number of line search steps", options="value=11")int ls_steps, 
@@ -142,6 +135,7 @@ public class MethodOptions implements Serializable{
 
     }
     
+    @OutputInfo(style="silent")
     public String getBasePath(){
         return basePath;
     }
