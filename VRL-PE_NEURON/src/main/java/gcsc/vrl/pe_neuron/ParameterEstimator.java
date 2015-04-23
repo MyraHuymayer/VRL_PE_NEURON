@@ -1,15 +1,13 @@
 package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
-import eu.mihosoft.vrl.io.ByteArrayClassLoader;
-import eu.mihosoft.vrl.system.VSysUtil;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
+import param_est.Parameter_Set;
 import param_est.newton;
 
 /**
@@ -19,8 +17,11 @@ import param_est.newton;
  */
 @ComponentInfo(name = "Parameter Estimator", category = "Optimization/NEURON", description = "")
 public class ParameterEstimator implements Serializable {
+        //NOTE: Es muss noch die Option implementiert werden, dass eine xml Datei gelesen wird, die schon existiert, d.h. Nutzer sollte auch Kontrolle dar\"uber haben -- evtl auch in einer anderen Klasse!      
+    
     
         private transient ArrayList<Double> defect;
+        private transient ArrayList<Parameter_Set> parameter_development;
         //NOTE: maybe therer should be a second method where an already existing xml file is loaded
 	private static final long serialVersionUID = 1L;
 
@@ -59,12 +60,19 @@ public class ParameterEstimator implements Serializable {
 		}
                 
                 defect = n.getDefect_tracking();
+                parameter_development = n.getParameter_development();
 
 	}
 
     public ArrayList<Double> getDefect() {
         return defect;
     }
+
+    public ArrayList<Parameter_Set> getParameter_development() {
+        return parameter_development;
+    }
+    
+    
 
         
 }
