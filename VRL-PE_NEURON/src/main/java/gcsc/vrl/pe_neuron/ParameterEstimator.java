@@ -1,6 +1,7 @@
 package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
+import eu.mihosoft.vrl.annotation.OutputInfo;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class ParameterEstimator implements Serializable {
     
         private transient ArrayList<Double> defect;
         private transient ArrayList<Parameter_Set> parameter_development;
+        private transient ArrayList<String> intermediate_res;
         //NOTE: maybe therer should be a second method where an already existing xml file is loaded
 	private static final long serialVersionUID = 1L;
 
@@ -61,16 +63,25 @@ public class ParameterEstimator implements Serializable {
                 
                 defect = n.getDefect_tracking();
                 parameter_development = n.getParameter_development();
+                intermediate_res = n.getRel_param_file_names();
 
 	}
 
+    @OutputInfo(name = "defect")
     public ArrayList<Double> getDefect() {
         return defect;
     }
-
-    public ArrayList<Parameter_Set> getParameter_development() {
+    
+    @OutputInfo(name = "parameter_variances")
+    public ArrayList<Parameter_Set> getParameter_Variances() {
         return parameter_development;
     }
+    
+    @OutputInfo(name = "intermediate_results")
+    public ArrayList<String> getIntermediate_results() {
+        return intermediate_res;
+    }
+    
     
     
 

@@ -120,6 +120,7 @@ public class WriteToLua {
                     }
                 }else if(line.contains("--[##$$ PARAMETERS_HERE $$##]--")){
                     if(parameters.isEmpty() || parameters == null){
+                        System.out.println("so the parameters are null, right?");
                         throw new IOException("Error: No parameters were found! "); 
                     }else{
                         for(int i = 0; i < parameters.size(); i++){
@@ -160,7 +161,7 @@ public class WriteToLua {
                     writer.write("timeModel = convertUnits(time_mod,"+modeldata.getExponents()[0]+")\n");
                     writer.write("currentModel = convertUnits(current_mod,"+modeldata.getExponents()[1]+")\n");
                 }else if(line.contains("--[##$$ filename $$##]-- ")){
-                    line = line.replace("--[##$$ filename $$##]-- ", "\""+expdata.getDataFile().getName()+"\"");
+                    line = line.replace("--[##$$ filename $$##]-- ", "\""+expdata.getDataFile().getCanonicalPath()+"\"");
                     writer.write(line);
                     
                 }else if(line.contains("--[##$$ FUNC_convertUnits_ED $$##]-- ")){

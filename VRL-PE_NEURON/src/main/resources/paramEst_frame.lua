@@ -141,6 +141,7 @@ base_path = GetParam("-base_path", path)
 hoc_file = --[##$$ HOCFILE_String $$##]--
 hoc_geom_ = GetParam("-hoc_geom", hoc_file)
 hoc_geom = base_path .. hoc_geom_
+print("Path to the hoc-File = "..hoc_geom)
 
 hoc_dt = GetParamNumber("-hoc_dt", 2.5e-5)
 hoc_tstop = GetParamNumber("-hoc_tstop", 2.69995)
@@ -260,7 +261,7 @@ end
 
 
 
-filename_Model = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe.."_"..voltage_step.."_"..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
+filename_Model = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe.."_"..vs.."_"..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
 removeFirstLine( filename_Model )
 timeModel, currentModel = readFromFile(filename_Model, 1)
 
@@ -279,7 +280,7 @@ final_currentModel, final_time_Model = cutDecimals(timeModel, currentModel)
 -- Provide Reference Solution --> experimental data
 -----------------------------------------------------------------
 
-filename_expData  = base_path..--[##$$ filename $$##]-- 
+filename_expData  = --[##$$ filename $$##]-- 
 
 timeData, currentData = readFromFile(filename_expData,1)
 
@@ -340,8 +341,8 @@ if common_file_name~="" then
 
 end	
 
-os.remove(filename_Model)
-fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_0_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
-os.remove(fn_dummy_step)
-fn_dummy_step = ug_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_"..voltage_step.."_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
-os.remove(fn_dummy_step) 
+--os.remove(filename_Model)
+--fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_0_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
+--os.remove(fn_dummy_step)
+--fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_"..vs.."_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
+--os.remove(fn_dummy_step) 

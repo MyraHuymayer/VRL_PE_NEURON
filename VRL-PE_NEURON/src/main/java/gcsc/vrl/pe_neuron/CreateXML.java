@@ -22,7 +22,7 @@ public class CreateXML implements Serializable{
     
     public void implementPEOptions(@ParamInfo(name ="Method options", options="")HeadLine estimator_methods, 
             @ParamInfo(name ="Parameter options", options="") ArrayList<String> parameter_options,
-            @ParamInfo(name ="Base path", options="") String path) throws IOException{
+            @ParamInfo(name ="Base path", options="", style="silent") String path) throws IOException{
         
         File paramEst = new File(path+"paramEst.xml");
         String headline = estimator_methods.getHeadline();

@@ -5,12 +5,13 @@ import eu.mihosoft.vrl.annotation.OutputInfo;
 import eu.mihosoft.vrl.math.Trajectory;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
-import param_est.Parameter;
 import param_est.Parameter_Set;
 
-/**
+/**Kv4_csi.mod
  * In this Class the User can choose which results of the parameter estimator shall be plotted.
  * @author myra
  */
@@ -125,8 +126,106 @@ public class PlottingOptions implements Serializable{
         
     }
     
-    public void plotIntermediateResults(/*input?*/){
+    //Nochmal checken ob der nullte Schritt abgedeckt ist!! 
+    public void plotIntermediateResults(ArrayList<String> intermediate_res){
+        ArrayList<Trajectory> inter_res = new ArrayList<Trajectory>();
+        int wolf =-1 , param =-1, vs=-1, zoom = -1; //default value
+        // read filenames 
+        for(String s : intermediate_res){
+            
+            //from String extract zoom, wolf, param and vs values 
+            Pattern p = Pattern.compile("\\d+");
+            Pattern p1 = Pattern.compile("min_\\d+");
+            Pattern p2 = Pattern.compile("plus_\\d+");
+            Pattern p3 = Pattern.compile("wolf\\d+");
+            Pattern p4 = Pattern.compile("_z_\\d+");
+            Pattern p5 = Pattern.compile("param_\\d");
+            Pattern p6 = Pattern.compile("param_wolf\\d+_\\d+");
+            
+            Matcher m1 = p1.matcher(s);
+            Matcher m2 = p2.matcher(s);
+            Matcher m3 = p3.matcher(s);
+            Matcher m4 = p4.matcher(s);
+            Matcher m5 = p5.matcher(s);
+            Matcher m6 = p6.matcher(s);
+            
+            if(m1.find() == true ){
+                String tmp = m1.group();
+                Matcher m = p.matcher(tmp);
+                if(m.find() == true){
+                  
+                    param = Integer.parseInt(m.group());
+                  
+                }
+                
+            }else if(m2.find() == true){
+                String tmp = m2.group();
+                Matcher m = p.matcher(tmp);
+                if(m.find() == true){
+                    param = Integer.parseInt(m.group());
+                   
+                }
+                
+
+            }else{
+                 
+                param = 99;
+               
+            }
+            
+            if(m3.find() == true){
+                String tmp = m3.group();
+                Matcher m = p.matcher(tmp);
+                
+                if(m.find() == true){
+                    wolf = Integer.parseInt(m.group());
+                }
+                
+            }else{
+                wolf = 99;
+            }
+            
+            if(m4.find() == true){
+                String tmp = m4.group();
+                Matcher m = p.matcher(tmp);
+                
+                if(m.find() == true){
+                    zoom = Integer.parseInt(m.group());
+                }
+            }else{
+                zoom = 99;
+            }
+            
+            if(m5.find() == true){
+                String tmp = m5.group();
+                Matcher m = p.matcher(tmp);
+                
+                if(m.find() == true){
+                    vs = Integer.parseInt(m.group());
+                }
+                
+            }else if(m6.find() == true){
+                String tmp = m6.group();
+                tmp = tmp.replaceAll("param_wolf\\d+_", "");
+                vs = Integer.parseInt(tmp);
+                
+            }
+            System.out.println("------------------------");
+            System.out.println("param = "+param);
+            System.out.println("wolf = "+wolf);
+            System.out.println("zoom = "+zoom);
+            System.out.println("vs = "+ vs);
+            System.out.println("------------------------");
+           
+             // choose neuron output file according to the name; is there a better way to solve this ? 
         
+             //import neuron data and store them in a trajectory
+            
+
+        }
+       
+        
+        //create successive pictures of the Trajectories
     }
 }
  
