@@ -37,7 +37,8 @@ public class FileCreator {
             ExpDataManipulation expdata, 
             String path, 
             MethodOptions options,
-            PE_Options param_properties
+            PE_Options param_properties, 
+            String tmp_path
             ) throws IOException{
         
         write2lua = new WriteToLua();
@@ -47,6 +48,7 @@ public class FileCreator {
         write2lua.setExpdata(expdata);
         write2lua.setParams(param_properties);
         write2lua.setMethod_options(options);
+        write2lua.setPath_tmpdir(tmp_path);
         
         write2lua.copyParamEst_frame();
         

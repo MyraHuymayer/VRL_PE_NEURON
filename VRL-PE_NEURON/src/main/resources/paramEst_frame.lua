@@ -134,7 +134,7 @@ dofile("/Users/myra/NEURON-Projects/Parameter_Estimation/VRL-Plugin/VRL-PE_NEURO
 
 -- hoc setup
 --base_path = "path"
-ug_path = --[##$$ PATHUG_String $$##]--
+tmp_path = --[##$$ PATHTMP_String $$##]--
 path = --[##$$ PATH_String $$##]--
 base_path = GetParam("-base_path", path)
 
@@ -261,7 +261,7 @@ end
 
 
 
-filename_Model = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe.."_"..vs.."_"..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
+filename_Model = tmp_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_"..wolfe.."_"..vs.."_"..zoom.."_--[##$$ MODEL_FILENAME_PART2 $#]--_"..ls_param..".txt"
 removeFirstLine( filename_Model )
 timeModel, currentModel = readFromFile(filename_Model, 1)
 
@@ -342,7 +342,7 @@ if common_file_name~="" then
 end	
 
 --os.remove(filename_Model)
---fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_0_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
+--fn_dummy_step = tmp_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_0_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt"
 --os.remove(fn_dummy_step)
---fn_dummy_step = base_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_"..vs.."_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
+--fn_dummy_step = tmp_path.."--[##$$ MODEL_FILENAME_PART1 $$##]--_0_"..vs.."_0_--[##$$ MODEL_FILENAME_PART2 $#]--_99.txt" 
 --os.remove(fn_dummy_step) 

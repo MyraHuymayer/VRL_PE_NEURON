@@ -4,9 +4,11 @@ package gcsc.vrl.pe_neuron;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -23,6 +25,8 @@ public class ModelManipulation implements Serializable{
     private int nextDataPoint;
     private String hocFile;
     private transient ArrayList<StoreValues> variables = new ArrayList<StoreValues>();
+    private Pattern neuronOut; /* this will basically look like this "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"*/ 
+            
     private String out_part1;
     private String out_part2;
     /*------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -224,14 +228,32 @@ public class ModelManipulation implements Serializable{
         this.out_part1 = out_part1;
         this.out_part2 = out_part2;
     }
-    
+    @MethodInfo(noGUI=true)
     public String getOut_part1(){
         return out_part1;
     }
-    
+    @MethodInfo(noGUI=true)
      public String getOut_part2(){
         return out_part2;
     }
+    
+    //STILL TODO: 
+   /*-->*/ public void setNEURONout(String fileName){
+        
+    }
+    
+    public void setNEURONout(@ParamInfo(name ="Base path", style = "load-dialog", options = "") File file){
+        
+    }
+    
+    // TODO: introduce another method which can extract the pattern of a string
+    
+    @MethodInfo(noGUI=true)
+    public Pattern getNEURONout() {
+        return neuronOut;
+    }/*<--*/
+     
+    
     
     /**
      * selectSort algorithm modified after the code example on http://rosettacode.org/wiki/Sorting_algorithms/Selection_sort#Java
@@ -264,5 +286,5 @@ public class ModelManipulation implements Serializable{
     @MethodInfo(noGUI=true)
     public double[] getExponents() {
         return exponents;
-    }
+    } 
 }

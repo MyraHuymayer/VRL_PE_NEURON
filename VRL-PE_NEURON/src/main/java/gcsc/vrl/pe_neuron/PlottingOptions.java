@@ -3,6 +3,10 @@ package gcsc.vrl.pe_neuron;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.OutputInfo;
 import eu.mihosoft.vrl.math.Trajectory;
+import import_data.read_datafiles.ReadTextFile;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -15,7 +19,7 @@ import param_est.Parameter_Set;
  * In this Class the User can choose which results of the parameter estimator shall be plotted.
  * @author myra
  */
-@ComponentInfo(name = "Plotting Options", category = "Optimization/NEURON", description = "")
+@ComponentInfo(name = "Options for Plotting", category = "Optimization/NEURON", description = "")
 public class PlottingOptions implements Serializable{
     //NOTE: Still requires testing!! but for that the ParameterEstimation first needs to work
     private transient StoreValues window;
@@ -122,110 +126,160 @@ public class PlottingOptions implements Serializable{
         }
     } 
     
-    public void plotFinalResults(/*input?*/){
+    public void plotResults(/*input?*/){
         
     }
     
-    //Nochmal checken ob der nullte Schritt abgedeckt ist!! 
-    public void plotIntermediateResults(ArrayList<String> intermediate_res){
-        ArrayList<Trajectory> inter_res = new ArrayList<Trajectory>();
-        int wolf =-1 , param =-1, vs=-1, zoom = -1; //default value
-        // read filenames 
-        for(String s : intermediate_res){
-            
-            //from String extract zoom, wolf, param and vs values 
-            Pattern p = Pattern.compile("\\d+");
-            Pattern p1 = Pattern.compile("min_\\d+");
-            Pattern p2 = Pattern.compile("plus_\\d+");
-            Pattern p3 = Pattern.compile("wolf\\d+");
-            Pattern p4 = Pattern.compile("_z_\\d+");
-            Pattern p5 = Pattern.compile("param_\\d");
-            Pattern p6 = Pattern.compile("param_wolf\\d+_\\d+");
-            
-            Matcher m1 = p1.matcher(s);
-            Matcher m2 = p2.matcher(s);
-            Matcher m3 = p3.matcher(s);
-            Matcher m4 = p4.matcher(s);
-            Matcher m5 = p5.matcher(s);
-            Matcher m6 = p6.matcher(s);
-            
-            if(m1.find() == true ){
-                String tmp = m1.group();
-                Matcher m = p.matcher(tmp);
-                if(m.find() == true){
-                  
-                    param = Integer.parseInt(m.group());
-                  
-                }
-                
-            }else if(m2.find() == true){
-                String tmp = m2.group();
-                Matcher m = p.matcher(tmp);
-                if(m.find() == true){
-                    param = Integer.parseInt(m.group());
-                   
-                }
-                
-
-            }else{
-                 
-                param = 99;
-               
-            }
-            
-            if(m3.find() == true){
-                String tmp = m3.group();
-                Matcher m = p.matcher(tmp);
-                
-                if(m.find() == true){
-                    wolf = Integer.parseInt(m.group());
-                }
-                
-            }else{
-                wolf = 99;
-            }
-            
-            if(m4.find() == true){
-                String tmp = m4.group();
-                Matcher m = p.matcher(tmp);
-                
-                if(m.find() == true){
-                    zoom = Integer.parseInt(m.group());
-                }
-            }else{
-                zoom = 99;
-            }
-            
-            if(m5.find() == true){
-                String tmp = m5.group();
-                Matcher m = p.matcher(tmp);
-                
-                if(m.find() == true){
-                    vs = Integer.parseInt(m.group());
-                }
-                
-            }else if(m6.find() == true){
-                String tmp = m6.group();
-                tmp = tmp.replaceAll("param_wolf\\d+_", "");
-                vs = Integer.parseInt(tmp);
-                
-            }
-            System.out.println("------------------------");
-            System.out.println("param = "+param);
-            System.out.println("wolf = "+wolf);
-            System.out.println("zoom = "+zoom);
-            System.out.println("vs = "+ vs);
-            System.out.println("------------------------");
-           
-             // choose neuron output file according to the name; is there a better way to solve this ? 
-        
-             //import neuron data and store them in a trajectory
-            
-
-        }
-       
-        
-        //create successive pictures of the Trajectories
-    }
+    //Nochmal checken ob der nullte Schritt abgedeckt ist!!
+    //NOTE: This method cannot function yet
+    //NOTE: Maybe we have to change our approach! 
+    //TODO: a lot should be outsourced! 
+//    public void plotIntermediateResults(ArrayList<String> intermediate_res, File destdir /*still a destination for the png files is needed ;should user know the directory? Plan this a bit later*/,
+//        String start, String middle, 
+//        File expdatafile) throws IOException, Exception{
+//        
+//        ArrayList<Trajectory> inter_res = new ArrayList<Trajectory>();
+//        
+//        int wolf =-1 , param =-1, vs=-1, zoom = -1; //default value
+//        
+//        int counter = 0;
+//        
+//        // read filenames 
+//        for(String s : intermediate_res){
+//            
+//            //from String extract zoom, wolf, param and vs values 
+//            Pattern p = Pattern.compile("\\d+");
+//            Pattern p1 = Pattern.compile("min_\\d+");
+//            Pattern p2 = Pattern.compile("plus_\\d+");
+//            Pattern p3 = Pattern.compile("wolf\\d+");
+//            Pattern p4 = Pattern.compile("_z_\\d+");
+//            Pattern p5 = Pattern.compile("param_\\d");
+//            Pattern p6 = Pattern.compile("param_wolf\\d+_\\d+");
+//            
+//            Matcher m1 = p1.matcher(s);
+//            Matcher m2 = p2.matcher(s);
+//            Matcher m3 = p3.matcher(s);
+//            Matcher m4 = p4.matcher(s);
+//            Matcher m5 = p5.matcher(s);
+//            Matcher m6 = p6.matcher(s);
+//            
+//            if(m1.find() == true ){
+//                String tmp = m1.group();
+//                Matcher m = p.matcher(tmp);
+//                if(m.find() == true){
+//                  
+//                    param = Integer.parseInt(m.group());
+//                  
+//                }
+//                
+//            }else if(m2.find() == true){
+//                String tmp = m2.group();
+//                Matcher m = p.matcher(tmp);
+//                if(m.find() == true){
+//                    param = Integer.parseInt(m.group());
+//                   
+//                }
+//                
+//
+//            }else{
+//                 
+//                param = 99;
+//               
+//            }
+//            
+//            if(m3.find() == true){
+//                String tmp = m3.group();
+//                Matcher m = p.matcher(tmp);
+//                
+//                if(m.find() == true){
+//                    wolf = Integer.parseInt(m.group());
+//                }
+//                
+//            }else{
+//                wolf = 99;
+//            }
+//            
+//            if(m4.find() == true){
+//                String tmp = m4.group();
+//                Matcher m = p.matcher(tmp);
+//                
+//                if(m.find() == true){
+//                    zoom = Integer.parseInt(m.group());
+//                }
+//            }else{
+//                zoom = 99;
+//            }
+//            
+//            if(m5.find() == true){
+//                String tmp = m5.group();
+//                Matcher m = p.matcher(tmp);
+//                
+//                if(m.find() == true){
+//                    vs = Integer.parseInt(m.group());
+//                }
+//                
+//            }else if(m6.find() == true){
+//                String tmp = m6.group();
+//                tmp = tmp.replaceAll("param_wolf\\d+_", "");
+//                vs = Integer.parseInt(tmp);
+//                
+//            }
+//            System.out.println("------------------------");
+//            System.out.println("param = "+param);
+//            System.out.println("wolf = "+wolf);
+//            System.out.println("zoom = "+zoom);
+//            System.out.println("vs = "+ vs);
+//            System.out.println("------------------------");
+//           
+//             // choose neuron output file according to the name; is there a better way to solve this ?
+//            //we search in a given directory (probably a tmp directory not known by the user) for a file with specific naming conventions: 
+//            //for now destdir is the directory where the files are assumed to lie in 
+//            /* this will basically look like this "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"*/ 
+//            
+//            //search all textfiles in a directory
+//            FilenameFilter textFilter = new FilenameFilter(){
+//                @Override
+//                public boolean accept(File dir, String name) {
+//                    return name.toLowerCase().endsWith(".txt"); 
+//                }
+//            };
+//            
+//            File[] files = destdir.listFiles(textFilter);
+//            
+//            for(File file : files){
+//                 //if we find a file that matches "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"
+//                 if(file.getName().equals(start+"_"+wolf+"_"+vs+"_"+zoom+"_"+middle+"_"+param+".txt")){
+//                     System.out.println("Klappt! :)");
+//                     
+//                     ReadTextFile read = new ReadTextFile();
+//                     
+//                     read.readDataFromFile(2, file.getCanonicalPath());
+//                     ArrayList<Double> time = read.getTime(1);
+//                     ArrayList<Double> current = read.getCurrent(2);
+//                     
+//                                   
+//                     Trajectory modelresult = new Trajectory("Step "+counter);
+//                     
+//                     for(int i = 0; i<current.size(); i++){
+//                         modelresult.add(time.get(i), current.get(i));
+//                     }
+//                     
+//                     inter_res.add(modelresult);
+//                 }
+//                 
+//            }        
+//         
+//            //import neuron data and store them in a trajectory (readfiles method)
+//            
+//            //store as Trajectory as png in directory
+//            
+//            //remove all the textfiles
+//            counter++;
+//
+//        }
+//       
+//        
+//        //create successive pictures of the Trajectories
+//    }
 }
  

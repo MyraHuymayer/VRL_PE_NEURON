@@ -24,6 +24,7 @@ public class WriteToLua {
     private ExpDataManipulation expdata = new ExpDataManipulation(); 
     private MethodOptions method_options = new MethodOptions();
     private PE_Options params = new PE_Options();
+    private String path_tmpdir;
   
     
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -84,9 +85,9 @@ public class WriteToLua {
         ArrayList<StoreValues> rel_time = modeldata.getTimespan();
         
         String basepath = method_options.getBasePath();
-        String path2ug = method_options.getPath2UG();
-        path2ug = path2ug.substring(1, path2ug.indexOf("ugshell"));
-        System.out.println("path to ug: " +path2ug);
+        //String path2ug = method_options.getPath2UG();
+        //path2ug = path2ug.substring(1, path2ug.indexOf("ugshell"));
+        //System.out.println("path to ug: " +path2ug);
 //        System.out.println("BASEPATH = "+basepath);
         ArrayList<StoreValues> parameters = params.getParams();
 
@@ -106,8 +107,8 @@ public class WriteToLua {
                 if(line.contains("--[##$$ HOCFILE_String $$##]--")){
                     line = line.replace("--[##$$ HOCFILE_String $$##]--", "\""+hocFile+"\"");
                     writer.write(line+"\n");
-                }else if(line.contains("--[##$$ PATHUG_String $$##]--")){
-                    line = line.replace("--[##$$ PATHUG_String $$##]--", "\""+path2ug+"\"");
+                }else if(line.contains("--[##$$ PATHTMP_String $$##]--")){
+                    line = line.replace("--[##$$ PATHTMP_String $$##]--", "\""+path_tmpdir+"\"");
                     writer.write(line+"\n");
                 }else if(line.contains("--[##$$ PATH_String $$##]--")){
                     line = line.replace("--[##$$ PATH_String $$##]--", "\""+basepath+"\"");
@@ -229,5 +230,14 @@ public class WriteToLua {
     public PE_Options getParams() {
         return params;
     }
+
+    public String getPath_tmpdir() {
+        return path_tmpdir;
+    }
+
+    public void setPath_tmpdir(String path_tmpdir) {
+        this.path_tmpdir = path_tmpdir;
+    }
    
+    
 }

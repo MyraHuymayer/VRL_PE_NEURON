@@ -20,7 +20,7 @@ public class CreateXML implements Serializable{
     
     private static final long serialVersionUID = 1L;   
     
-    public void implementPEOptions(@ParamInfo(name ="Method options", options="")HeadLine estimator_methods, 
+    public void implementEstimatorOptions(@ParamInfo(name ="Method options", options="")HeadLine estimator_methods, 
             @ParamInfo(name ="Parameter options", options="") ArrayList<String> parameter_options,
             @ParamInfo(name ="Base path", options="", style="silent") String path) throws IOException{
         

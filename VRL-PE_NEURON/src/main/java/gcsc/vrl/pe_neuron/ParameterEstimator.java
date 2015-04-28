@@ -2,6 +2,9 @@ package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.OutputInfo;
+import eu.mihosoft.vrl.io.IOUtil;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,16 +41,20 @@ public class ParameterEstimator implements Serializable {
          * @throws ParserConfigurationException 
          */
 	@SuppressWarnings("UseSpecificCatch")
-	public void runParameterEstimator(String path,
-		ModelManipulation modeldata,
+	public void runParameterEstimator(ModelManipulation modeldata,
 		ExpDataManipulation expdata,
 		MethodOptions options,
 		PE_Options param_properties) throws IOException, ParserConfigurationException {
 
+                String path = options.getBasePath();
+                //create temporary directory where Neuron Output files are stored.
+                
+               File tmp_dir = IOUtil.createTempDir();
+               String tmp_name = tmp_dir.getCanonicalPath();
         //TODO: 
 		//1. create the luascript required by the parameter estimator
 		FileCreator fc = new FileCreator();
-		fc.createFile(modeldata, expdata, path, options, param_properties);
+		fc.createFile(modeldata, expdata, path, options, param_properties, tmp_name);
 
 		//2. rufe den Parameterschaetzer mittels shellscript auf! Dazu brauchen wir vorraussichtlich VSystUtil und eventuell noch andere Klassen der VRL
 	
@@ -61,9 +68,30 @@ public class ParameterEstimator implements Serializable {
 			System.exit(0);
 		}
                 
+                //check if textfiles are/were written to user.dir
+                FilenameFilter textFilter = new FilenameFilter(){
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.toLowerCase().endsWith(".txt"); 
+                    }
+                };
+
+                File dir = new File(System.getProperty("user.dir")); 
+                
+                File[] textfiles = dir.listFiles(textFilter);
+                
+                for(File f : textfiles){
+                    IOUtil.move(f, tmp_dir);
+                }
+                
+                
                 defect = n.getDefect_tracking();
                 parameter_development = n.getParameter_development();
                 intermediate_res = n.getRel_param_file_names();
+                
+                //delete param and data file -- they are not needed anymore and just use space
+                IOUtil.deleteDirectory(new File(path+"param")); 
+                IOUtil.deleteDirectory(new File(path+"data"));
 
 	}
 
