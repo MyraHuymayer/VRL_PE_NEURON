@@ -26,7 +26,7 @@ public class ParameterEstimator implements Serializable {
     
         private transient ArrayList<Double> defect;
         private transient ArrayList<Parameter_Set> parameter_development;
-        private transient ArrayList<String> intermediate_res;
+        private transient ArrayList<String> fileNames;
         //NOTE: maybe therer should be a second method where an already existing xml file is loaded
 	private static final long serialVersionUID = 1L;
 
@@ -88,7 +88,7 @@ public class ParameterEstimator implements Serializable {
                 
                 defect = n.getDefect_tracking();
                 parameter_development = n.getParameter_development();
-                intermediate_res = n.getRel_param_file_names();
+                fileNames = n.getRel_param_file_names();
                 
                 //delete param and data file -- they are not needed anymore and just use space
                 IOUtil.deleteDirectory(new File(path+"param")); 
@@ -106,10 +106,13 @@ public class ParameterEstimator implements Serializable {
         return parameter_development;
     }
     
-    @OutputInfo(name = "intermediate_results")
-    public ArrayList<String> getIntermediate_results() {
-        return intermediate_res;
+    private void extractRelevantFiles(ModelManipulation modeldata){
+        
     }
+//    @OutputInfo(name = "intermediate_results")
+//    public ArrayList<String> getFileNames() {
+//        return fileNames;
+//    }
     
     
     

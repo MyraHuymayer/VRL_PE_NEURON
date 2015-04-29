@@ -169,8 +169,8 @@ public class WriteToLua {
                     writer.write("timeData = convertUnits(timeData,"+expdata.getExponents()[0]+")\n");
                     writer.write("currentData = convertUnits(currentData,"+expdata.getExponents()[1]+")\n");
                 }else if(line.contains("--[##$$ MODEL_FILENAME_PART1 $$##]--") && line.contains("--[##$$ MODEL_FILENAME_PART2 $#]--") ){
-                    line = line.replace("--[##$$ MODEL_FILENAME_PART1 $$##]--", modeldata.getOut_part1());
-                    line = line.replace("--[##$$ MODEL_FILENAME_PART2 $#]--",modeldata.getOut_part2());
+                    line = line.replace("--[##$$ MODEL_FILENAME_PART1 $$##]--", modeldata.getNEURONout()[0]);
+                    line = line.replace("--[##$$ MODEL_FILENAME_PART2 $#]--",modeldata.getNEURONout()[2]);
                     writer.write(line+"\n");
                 }else{
                     writer.write(line+"\n");

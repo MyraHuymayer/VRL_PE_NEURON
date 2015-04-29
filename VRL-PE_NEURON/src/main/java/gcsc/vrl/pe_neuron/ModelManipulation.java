@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -25,10 +26,10 @@ public class ModelManipulation implements Serializable{
     private int nextDataPoint;
     private String hocFile;
     private transient ArrayList<StoreValues> variables = new ArrayList<StoreValues>();
-    private Pattern neuronOut; /* this will basically look like this "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"*/ 
+    private String[] neuronOut; /* this will basically look like this "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"*/ 
             
-    private String out_part1;
-    private String out_part2;
+//    private String out_part1;
+//    private String out_part2;
     /*------------------------------------------------------------------------------------------------------------------------------------------------------------*/
    
     /**
@@ -222,34 +223,67 @@ public class ModelManipulation implements Serializable{
         return variables;
     }
     
-    //Nicht sicher ob ich das so beibehalten moechte! 
-    public void setNameForOutputFile(String out_part1, String out_part2 ){
-        
-        this.out_part1 = out_part1;
-        this.out_part2 = out_part2;
-    }
-    @MethodInfo(noGUI=true)
-    public String getOut_part1(){
-        return out_part1;
-    }
-    @MethodInfo(noGUI=true)
-     public String getOut_part2(){
-        return out_part2;
-    }
+    
+//    public void setNameForOutputFile(String out_part1, String out_part2 ){
+//        
+//        this.out_part1 = out_part1;
+//        this.out_part2 = out_part2;
+//    }
+//    @MethodInfo(noGUI=true)
+//    public String getOut_part1(){
+//        return out_part1;
+//    }
+//    @MethodInfo(noGUI=true)
+//     public String getOut_part2(){
+//        return out_part2;
+//    }
     
     //STILL TODO: 
-   /*-->*/ public void setNEURONout(String fileName){
+   /*-->*/ public void setNEURONout(String fileName) throws IOException{
         
+       extractFileInformation(fileName);
     }
     
-    public void setNEURONout(@ParamInfo(name ="Base path", style = "load-dialog", options = "") File file){
+    public void setNEURONout(@ParamInfo(name ="Base path", style = "load-dialog", options = "") File file) throws IOException{
+        
+        String filename = file.getName();
+        
+        extractFileInformation(filename);
         
     }
     
     // TODO: introduce another method which can extract the pattern of a string
-    
+    private String[] extractFileInformation(String filename) throws IOException{
+        
+        String [] fileinfo = new String[4]; //should not be more
+        
+        if(!filename.endsWith(".txt")){
+            throw new IOException("Error: NEURON output file should be a textfile!");
+        }
+        
+        Pattern p = Pattern.compile("(.*)(_\\d+_\\d+_\\d+_)(.*)(_\\d+.txt)");
+        
+        Matcher m = p.matcher(filename);
+                
+        if(m.matches()){
+            
+            fileinfo[0] = m.group(1);
+            fileinfo[1] = m.group(2);
+            fileinfo[2] = m.group(3);
+            fileinfo[3] = m.group(4);
+            
+
+        }else{
+            throw new IOException("Error: the given filename does not match with the naming convention required by the parameter estimator plugin. See documentation for help! ");        
+        }
+        
+        return fileinfo;
+
+    } 
+            
+            
     @MethodInfo(noGUI=true)
-    public Pattern getNEURONout() {
+    public String[] getNEURONout() {
         return neuronOut;
     }/*<--*/
      
