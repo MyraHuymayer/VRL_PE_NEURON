@@ -47,17 +47,18 @@ public class ParameterEstimator implements Serializable {
 		PE_Options param_properties) throws IOException, ParserConfigurationException {
 
                 String path = options.getBasePath();
-                //create temporary directory where Neuron Output files are stored.
                 
+                File dir = new File(System.getProperty("user.dir")); 
+                //create temporary directory where Neuron Output files are stored.                
                File tmp_dir = IOUtil.createTempDir();
                String tmp_name = tmp_dir.getCanonicalPath();
         //TODO: 
 		//1. create the luascript required by the parameter estimator
 		FileCreator fc = new FileCreator();
-		fc.createFile(modeldata, expdata, path, options, param_properties, tmp_name);
+		fc.createFile(modeldata, expdata, path, options, param_properties, dir.getCanonicalPath()+"/");
 
 		//2. rufe den Parameterschaetzer mittels shellscript auf! Dazu brauchen wir vorraussichtlich VSystUtil und eventuell noch andere Klassen der VRL
-	
+                
                 newton n = new newton();
 		n.load_from_xml(path + "paramEst.xml");
 		try {
@@ -76,7 +77,7 @@ public class ParameterEstimator implements Serializable {
                     }
                 };
 
-                File dir = new File(System.getProperty("user.dir")); 
+                
                 
                 File[] textfiles = dir.listFiles(textFilter);
                 
