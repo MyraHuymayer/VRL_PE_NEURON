@@ -80,8 +80,8 @@ public class PENPluginConfigurator extends VPluginConfigurator{
         setExecutable(binaryCopy);
         saveBinaryLib();
         //copy x_86_64 directory
-        File dir = new File(System.getProperty("user.dir"), "x86_64");
-        copy_X86_64(dir);
+        //File dir = new File(System.getProperty("user.dir"), "x86_64");
+       // copy_X86_64(dir);
     }
     
     private void saveBinary(){
