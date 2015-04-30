@@ -45,10 +45,32 @@ public class ParameterEstimator implements Serializable {
 		ExpDataManipulation expdata,
 		MethodOptions options,
 		PE_Options param_properties) throws IOException, ParserConfigurationException {
+                
+            
 
                 String path = options.getBasePath();
                 
-                File dir = new File(System.getProperty("user.dir")); 
+                final File dir = new File(System.getProperty("user.dir")); 
+               
+                final FilenameFilter textFilter = new FilenameFilter(){
+                
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.toLowerCase().endsWith(".txt"); 
+                    }
+                };
+                
+                
+                Runtime.getRuntime().addShutdownHook( new Thread() {
+                @Override public void run() {
+                    File[] textfiles = dir.listFiles(textFilter);
+                    for(File f : textfiles){
+                        f.delete();
+                       
+                    }
+                    
+                }
+                } );
                 //create temporary directory where Neuron Output files are stored.                
                File tmp_dir = IOUtil.createTempDir();
                String tmp_name = tmp_dir.getCanonicalPath();
@@ -70,12 +92,7 @@ public class ParameterEstimator implements Serializable {
 		}
                 
                 //check if textfiles are/were written to user.dir
-                FilenameFilter textFilter = new FilenameFilter(){
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.toLowerCase().endsWith(".txt"); 
-                    }
-                };
+                
 
                 
                 
@@ -106,9 +123,9 @@ public class ParameterEstimator implements Serializable {
         return parameter_development;
     }
     
-    private void extractRelevantFiles(ModelManipulation modeldata){
-        
-    }
+//    private void extractRelevantFiles(ModelManipulation modeldata){
+//        
+//    }
 //    @OutputInfo(name = "intermediate_results")
 //    public ArrayList<String> getFileNames() {
 //        return fileNames;

@@ -171,7 +171,7 @@ public class WriteToLua {
                 }else if(line.contains("--[##$$ MODEL_FILENAME_PART1 $$##]--") && line.contains("--[##$$ MODEL_FILENAME_PART2 $#]--") ){
                     line = line.replace("--[##$$ MODEL_FILENAME_PART1 $$##]--", modeldata.getNEURONout()[0]);
                     line = line.replace("--[##$$ MODEL_FILENAME_PART2 $#]--",modeldata.getNEURONout()[2]);
-                    writer.write(line+"\n");
+                    writer.write(line+"\n");               
                 }else{
                     writer.write(line+"\n");
                 }

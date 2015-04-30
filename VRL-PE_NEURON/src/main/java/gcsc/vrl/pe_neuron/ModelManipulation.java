@@ -26,7 +26,7 @@ public class ModelManipulation implements Serializable{
     private int nextDataPoint;
     private String hocFile;
     private transient ArrayList<StoreValues> variables = new ArrayList<StoreValues>();
-    private String[] neuronOut; /* this will basically look like this "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"*/ 
+    private String[] neuronOut; /* this will basically look like this "{AnyStart} {_//d+_//d+_//d+_} {AnyMiddlePart} {_//d+.txt} "*/ 
             
 //    private String out_part1;
 //    private String out_part2;
@@ -237,22 +237,37 @@ public class ModelManipulation implements Serializable{
 //     public String getOut_part2(){
 //        return out_part2;
 //    }
-    
-    //STILL TODO: 
-   /*-->*/ public void setNEURONout(String fileName) throws IOException{
+
+    /**
+     * set the filename of the neuron output by inserting a string
+     * @param fileName neuron output file name 
+     * @throws IOException is thrown when naming convention is not satisfied 
+     */
+    public void setNEURONout(String fileName) throws IOException{
         
-       extractFileInformation(fileName);
+        this.neuronOut = extractFileInformation(fileName);
     }
     
+    /**
+     * Set the filename of the neuron output by reading an existing file
+     * @param file NEURON output file
+     * @throws IOException is thrown when naming convention is not satisfied 
+     */
     public void setNEURONout(@ParamInfo(name ="Base path", style = "load-dialog", options = "") File file) throws IOException{
         
         String filename = file.getName();
         
-        extractFileInformation(filename);
+        this.neuronOut = extractFileInformation(filename);
         
     }
     
     // TODO: introduce another method which can extract the pattern of a string
+    /**
+     * splits the filename into four substrings, of which the second and fourth must match with the filename conventions specified in the documentation; the first and third can be freely chosen
+     * @param filename the filename of the neuron output that was either inserted manually or by choosing an existing filename 
+     * @return the filename that was split into four substrings
+     * @throws IOException is thrown when naming convention is not satisfied 
+     */
     private String[] extractFileInformation(String filename) throws IOException{
         
         String [] fileinfo = new String[4]; //should not be more
@@ -277,16 +292,23 @@ public class ModelManipulation implements Serializable{
             throw new IOException("Error: the given filename does not match with the naming convention required by the parameter estimator plugin. See documentation for help! ");        
         }
         
+        for(int i = 0; i< fileinfo.length; i++){
+            System.out.println("filename["+i+"] = "+fileinfo[i]);
+        }
+        
         return fileinfo;
 
     } 
             
-            
+    /**
+     * get the neuron file output
+     * @return the filename split into four substrings
+     */
     @MethodInfo(noGUI=true)
     public String[] getNEURONout() {
         return neuronOut;
-    }/*<--*/
-     
+    }   
+    
     
     
     /**
