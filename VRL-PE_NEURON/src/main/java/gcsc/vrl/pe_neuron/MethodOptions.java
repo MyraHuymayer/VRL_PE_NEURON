@@ -4,7 +4,7 @@ import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.OutputInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
-import eu.mihosoft.vrl.system.VRL;
+import eu.mihosoft.vrl.system.PluginDataController;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -53,9 +53,12 @@ public class MethodOptions implements Serializable{
         //lua script necessary for the parameter estimator --> since the user never has direct access or knowledge of this file, the name is defined here!
         String lua = basePath+"paramEst.lua";
         path2UG = "";        
+        
+        PENPluginConfigurator pc = new PENPluginConfigurator();
+        
+        PluginDataController controller = new PluginDataController(pc);
+        path2UG = controller.getResourceFolder() + "/ugshell";
 
-        path2UG = VRL.getPropertyFolderManager().getResourcesFolder() + "/ugshell";
-       
 ////        NOTE: We only need the path to ugshell in the resources folder of the plugin: probably all code following is unnecessary!! 
         
 //        if(VSysUtil.isMacOSX()){
