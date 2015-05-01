@@ -176,7 +176,7 @@ public class ModelManipulation implements Serializable{
      * @param hocFile name of the hoc-file
      * @throws IOException 
      */
-    public void hocFilename(@ParamInfo(name ="NEURON hoc File ", options="value=\"Fig1c1.hoc\"")String hocFile) throws IOException{
+    public void hocFilename(@ParamInfo(name ="NEURON hoc File ", options="value=\"Fig1a.hoc\"")String hocFile) throws IOException{
         
         if(hocFile.contains(".hoc")){
             
@@ -292,9 +292,6 @@ public class ModelManipulation implements Serializable{
             throw new IOException("Error: the given filename does not match with the naming convention required by the parameter estimator plugin. See documentation for help! ");        
         }
         
-        for(int i = 0; i< fileinfo.length; i++){
-            System.out.println("filename["+i+"] = "+fileinfo[i]);
-        }
         
         return fileinfo;
 

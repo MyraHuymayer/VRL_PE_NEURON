@@ -49,6 +49,7 @@ public class PENPluginConfigurator extends VPluginConfigurator{
             vapi.addComponent(ExpDataManipulation.class);
             vapi.addComponent(ParameterEstimator.class);
             vapi.addComponent(PlottingOptions.class);
+            vapi.addComponent(LoadProject.class);
         }
     }
     
@@ -79,9 +80,7 @@ public class PENPluginConfigurator extends VPluginConfigurator{
         saveBinary();
         setExecutable(binaryCopy);
         saveBinaryLib();
-        //copy x_86_64 directory
-        File dir = new File(System.getProperty("user.dir"), "x86_64");
-        copy_X86_64(dir);
+
     }
     
     private void saveBinary(){
@@ -116,16 +115,7 @@ public class PENPluginConfigurator extends VPluginConfigurator{
         }
     }
     
-    private void copy_X86_64(File destination) {
-//        String path = VSysUtil.getSystemBinaryPath()+"x86_64/";
-        try{
-            IOUtil.copyDirectory(new File("/Users/myra/spaces_spaces/x86_64"), destination);
-            System.out.println("x86_64 Folder not Found!");
-        }catch(IOException ex){
-             System.out.println("x86_64 Folder not Found!");
-            Logger.getLogger(VRLPlugin.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-    }
+
     private void setExecutable(File file){
         if(!file.canExecute()){
             file.setExecutable(true);
