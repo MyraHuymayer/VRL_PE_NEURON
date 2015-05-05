@@ -55,7 +55,7 @@ public class LoadProject implements Serializable{
             try{
                 //copy the project file (this is a zip file) to the data directory 
                 IOUtil.saveStreamToFile(is, projectCopy);
-                //unpack the project file
+                //unpack the project file      
                 IOUtil.unzip(projectCopy, data_directory);
                 
                 //delete the zip file 
@@ -63,9 +63,9 @@ public class LoadProject implements Serializable{
                 File dir = new File(System.getProperty("user.dir"), "x86_64");
                 if(dir.exists()){
                     IOUtil.deleteDirectory(dir);  
-                    
-                }
                 
+                    }
+     
                 //move the x86_64 folder to the user directory
                 IOUtil.copyDirectory(new File(data_directory.getCanonicalPath()+"/x86_64"), dir);
                 //delete x86_64 directory from basebath - it is not useful for the user at all

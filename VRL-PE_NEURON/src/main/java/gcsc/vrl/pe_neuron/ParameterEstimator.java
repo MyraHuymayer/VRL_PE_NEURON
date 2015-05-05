@@ -2,6 +2,7 @@ package gcsc.vrl.pe_neuron;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.OutputInfo;
+import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -49,9 +50,48 @@ public class ParameterEstimator implements Serializable {
             
 
                 String path = options.getBasePath();
-                
+              
                 final File dir = new File(System.getProperty("user.dir")); 
-               
+
+		//1. create the luascript required by the parameter estimator
+		FileCreator fc = new FileCreator();
+		fc.createFile(modeldata, expdata, path, options, param_properties, dir.getCanonicalPath()+"/");
+                
+		//2. rufe den Parameterschaetzer mittels shellscript auf! Dazu brauchen wir vorraussichtlich VSystUtil und eventuell noch andere Klassen der VRL
+                parameter_estimation("paramEst.xml", path);
+                
+	}
+      
+        /**
+         * run the parameter estimator with an existing project
+         * @param xml existing xml file 
+         * @throws IOException
+         * @throws ParserConfigurationException 
+         */
+        public void runParameterEstimator(@ParamInfo(name ="xml file", style = "load-dialog", options = "") File xml) throws IOException, ParserConfigurationException{
+           
+            if (!xml.getCanonicalPath().endsWith(".xml")) {
+                throw new IOException("Error: chosen File is not an xml file!");
+            }
+            String name = xml.getName();
+            String path = xml.getCanonicalPath().replace(name, "");
+            
+            parameter_estimation(name, path);
+           
+        }
+        
+        /**
+         * Method to call the functionality of the parameter estimator: only requires the xml file and the path to the xml file
+         * @param xml_name the name of the xml file
+         * @param path the path to the directory where the xml file is located 
+         * @throws IOException
+         * @throws ParserConfigurationException 
+         */
+        @SuppressWarnings("UseSpecificCatch")
+        private void parameter_estimation(String xml_name, String path)throws IOException, ParserConfigurationException{ //im Prinzip muesste die jetzt auch funktionieren 
+            
+                final File dir = new File(System.getProperty("user.dir")); 
+
                 final FilenameFilter textFilter = new FilenameFilter(){
                 
                     @Override
@@ -63,26 +103,22 @@ public class ParameterEstimator implements Serializable {
                 
                 Runtime.getRuntime().addShutdownHook( new Thread() {
                 @Override public void run() {
+                   
                     File[] textfiles = dir.listFiles(textFilter);
-                    for(File f : textfiles){
-                        f.delete();
+                    
+                    if(textfiles != null){
+                        for(File f : textfiles){
+                            f.delete();
+                        }
                        
                     }
                     
                 }
                 } );
-                //create temporary directory where Neuron Output files are stored.                
-               File tmp_dir = IOUtil.createTempDir();
-               String tmp_name = tmp_dir.getCanonicalPath();
-        //TODO: 
-		//1. create the luascript required by the parameter estimator
-		FileCreator fc = new FileCreator();
-		fc.createFile(modeldata, expdata, path, options, param_properties, dir.getCanonicalPath()+"/");
-
-		//2. rufe den Parameterschaetzer mittels shellscript auf! Dazu brauchen wir vorraussichtlich VSystUtil und eventuell noch andere Klassen der VRL
-                
+                           
+                //call the parameter estimator
                 newton n = new newton();
-		n.load_from_xml(path + "paramEst.xml");
+		n.load_from_xml(path+xml_name);
 		try {
 			n.perform_fit();
                                
@@ -90,19 +126,7 @@ public class ParameterEstimator implements Serializable {
 			Logger.getLogger(ParameterEstimator.class.getName()).log(Level.SEVERE, null, ex);
 			System.exit(0);
 		}
-                
-                //check if textfiles are/were written to user.dir
-                
 
-                
-                
-                File[] textfiles = dir.listFiles(textFilter);
-                
-                for(File f : textfiles){
-                    IOUtil.move(f, tmp_dir);
-                }
-                
-                
                 defect = n.getDefect_tracking();
                 parameter_development = n.getParameter_development();
                 fileNames = n.getRel_param_file_names();
@@ -111,7 +135,61 @@ public class ParameterEstimator implements Serializable {
                 IOUtil.deleteDirectory(new File(path+"param")); 
                 IOUtil.deleteDirectory(new File(path+"data"));
 
-	}
+            
+            
+            
+//            final File dir = new File(System.getProperty("user.dir"));       
+//            
+//            final FilenameFilter textFilter = new FilenameFilter(){            
+//                @Override
+//                public boolean accept(File dir, String name) {
+//                    return name.toLowerCase().endsWith(".txt"); 
+//                }
+//            };
+//            
+//            //shutdownhook ensuring that all text files are deleted from user directory if this method is terminated too early
+//            Runtime.getRuntime().addShutdownHook( new Thread() {
+//                @Override public void run() {               
+//                    File[] textfiles = dir.listFiles(textFilter);
+//                    if(textfiles != null || textfiles.length != 0){
+//                        for(File f : textfiles){
+//                            f.delete();
+//                        }
+//                    } 
+//                }
+//            } );
+//            
+//            File tmp_dir = IOUtil.createTempDir();
+//            String tmp_name = tmp_dir.getCanonicalPath();
+//            
+//            newton n = new newton();
+//            n.load_from_xml(xml_name);
+//            try {
+//                n.perform_fit();
+//               
+//            } catch (Exception ex) {
+//                Logger.getLogger(ParameterEstimator.class.getName()).log(Level.SEVERE, null, ex);
+//                System.exit(0);
+//            }
+//            
+//            File[] files = dir.listFiles(textFilter);      
+//            
+//            System.out.println("How many text files are in the directory? >> "+files.length);
+//            for(File f : files){
+//                boolean move = IOUtil.move(f, tmp_dir);
+//                System.out.println("No movement took place? "+move);
+//            }
+//                
+//                
+//                defect = n.getDefect_tracking();
+//                parameter_development = n.getParameter_development();
+//                fileNames = n.getRel_param_file_names();
+//                
+//                //delete param and data file -- they are not needed anymore and just use space
+//               // IOUtil.deleteDirectory(new File(path+"param")); 
+//               // IOUtil.deleteDirectory(new File(path+"data"));
+        }
+       /*<--*/
 
     @OutputInfo(name = "defect")
     public ArrayList<Double> getDefect() {
