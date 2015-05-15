@@ -52,14 +52,14 @@ public class ModelManipulation implements Serializable{
         
         double current_exp = 0;
         
-        if(currentUnit.equals("pA")){
-            current_exp = -12;
-        }else if(currentUnit.equals("nA")){
-            current_exp = -9;
-        }else if(currentUnit.equals("uA")){
-            current_exp = -6;
-        }else if(currentUnit.equals("A")){
+        if(currentUnit.equals("nA")){
             current_exp = 3;
+        }else if(currentUnit.equals("uA")){
+            current_exp = 6;
+        }else if(currentUnit.equals("mA")){
+            current_exp = 9;
+        }else if(currentUnit.equals("A")){
+            current_exp = 12;
         }else{
             current_exp = 0;
         }
