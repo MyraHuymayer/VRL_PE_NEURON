@@ -1,27 +1,22 @@
 package gcsc.vrl.pe_neuron;
 
+import data_storage.DataTraces;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.OutputInfo;
 import eu.mihosoft.vrl.math.Trajectory;
-import import_data.read_datafiles.ReadTextFile;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import param_est.Parameter_Set;
 
-/**Kv4_csi.mod
- * In this Class the User can choose which results of the parameter estimator shall be plotted.
+/**
+ * In this Class the User can choose which results of the parameter estimator shall be plotted or displayed.
  * @author myra
  */
 @ComponentInfo(name = "Options for Plotting", category = "Optimization/NEURON", description = "")
 public class PlottingOptions implements Serializable{
-    //NOTE: Still requires testing!! but for that the ParameterEstimation first needs to work
+
     private transient StoreValues window;
     
     /**
@@ -50,8 +45,9 @@ public class PlottingOptions implements Serializable{
     
 
     
-    //TESTING REQUIRED!
+
     public void calculateParameterVariance(ArrayList<Parameter_Set> param_development){
+
         //get Parameter names and Values
         double[] values;
         double[] variances;
@@ -76,6 +72,7 @@ public class PlottingOptions implements Serializable{
                 Variance v = new Variance();
                 //so muesste das stimmen - 
                 values[j] = param_development.get(j).getValues()[i];
+                System.out.println("values =" + values[j]);
 
                 double var = v.evaluate(values);
                 
@@ -91,7 +88,7 @@ public class PlottingOptions implements Serializable{
         String msg = "";
         
         for(int i = 0; i< variances.length; i++){
-            msg = names[i]+" = "+variances[i]+"\n";
+            msg = msg + names[i]+" = "+variances[i]+"\n";
         }
         //Result printed to popup dialog when this method is invoked
         JOptionPane.showMessageDialog(null, msg);
@@ -102,7 +99,6 @@ public class PlottingOptions implements Serializable{
      * @param nums values, stored in a double array
      * @param names names that appertain to the values
      */
-    //TESTING REQUIRED!
     private static void sortHighToLow(double[] nums, String[] names){  
         
         for(int i = 0; i<nums.length-1; i++){  
@@ -126,160 +122,64 @@ public class PlottingOptions implements Serializable{
         }
     } 
     
-    public void plotResults(/*input?*/){
+    /**
+     * writes the final results of the experimental/reference data, the initial model and the updated model to a trajectory and returns this.
+     * @param final_results An array of the Data Traces of the experimental data, the initial model data and the updated model data
+     * @return an array of three trajectories
+     */
+    @OutputInfo(style = "multi-out",
+    elemTypes = {Trajectory.class, Trajectory.class, Trajectory.class},
+    elemNames = {"data files", "model before parameter estimation", "model after parameter estimation"},
+    elemStyles = {"default", "default", "default", "default"})
+    public Object[] plotResults(DataTraces[] final_results){
         
+        Trajectory[] result = new Trajectory[3];
+        result[0] = new Trajectory("experimental data");
+        result[1] = new Trajectory("initial model");
+        result[2] = new Trajectory("updated model");
+        
+        for(int i = 0; i< result.length; i++){
+            result[i].setxAxisLabel("time [ms]");
+            result[i].setyAxisLabel("current [mA]");
+        }
+        
+        for(int i = 0; i < final_results[0].getX_trace().size(); i++){
+            
+            double x = final_results[0].getX_trace().get(i);
+            
+            double y = final_results[0].getY_trace().get(i);
+           
+            
+            result[0].add(x, y);
+           
+        }   
+
+        for(int j = 0; j < final_results[1].getX_trace().size(); j++){
+            
+            double x = final_results[1].getX_trace().get(j);
+            double y = final_results[1].getY_trace().get(j); 
+            result[1].add(x, y);
+        }
+        
+        for(int j = 0; j < final_results[2].getX_trace().size(); j++){
+            double x = final_results[2].getX_trace().get(j);
+            double y = final_results[2].getY_trace().get(j);
+            result[2].add(x , y);
+        }
+        
+        Object[] objResult = new Object[result.length];
+        
+        System.arraycopy(result, 0, objResult, 0, result.length);
+
+        return objResult;
+
     }
     
     //Nochmal checken ob der nullte Schritt abgedeckt ist!!
-    //NOTE: This method cannot function yet
     //NOTE: Maybe we have to change our approach! 
     //TODO: a lot should be outsourced! 
-//    public void plotIntermediateResults(ArrayList<String> intermediate_res, File destdir /*still a destination for the png files is needed ;should user know the directory? Plan this a bit later*/,
-//        String start, String middle, 
-//        File expdatafile) throws IOException, Exception{
-//        
-//        ArrayList<Trajectory> inter_res = new ArrayList<Trajectory>();
-//        
-//        int wolf =-1 , param =-1, vs=-1, zoom = -1; //default value
-//        
-//        int counter = 0;
-//        
-//        // read filenames 
-//        for(String s : intermediate_res){
-//            
-//            //from String extract zoom, wolf, param and vs values 
-//            Pattern p = Pattern.compile("\\d+");
-//            Pattern p1 = Pattern.compile("min_\\d+");
-//            Pattern p2 = Pattern.compile("plus_\\d+");
-//            Pattern p3 = Pattern.compile("wolf\\d+");
-//            Pattern p4 = Pattern.compile("_z_\\d+");
-//            Pattern p5 = Pattern.compile("param_\\d");
-//            Pattern p6 = Pattern.compile("param_wolf\\d+_\\d+");
-//            
-//            Matcher m1 = p1.matcher(s);
-//            Matcher m2 = p2.matcher(s);
-//            Matcher m3 = p3.matcher(s);
-//            Matcher m4 = p4.matcher(s);
-//            Matcher m5 = p5.matcher(s);
-//            Matcher m6 = p6.matcher(s);
-//            
-//            if(m1.find() == true ){
-//                String tmp = m1.group();
-//                Matcher m = p.matcher(tmp);
-//                if(m.find() == true){
-//                  
-//                    param = Integer.parseInt(m.group());
-//                  
-//                }
-//                
-//            }else if(m2.find() == true){
-//                String tmp = m2.group();
-//                Matcher m = p.matcher(tmp);
-//                if(m.find() == true){
-//                    param = Integer.parseInt(m.group());
-//                   
-//                }
-//                
-//
-//            }else{
-//                 
-//                param = 99;
-//               
-//            }
-//            
-//            if(m3.find() == true){
-//                String tmp = m3.group();
-//                Matcher m = p.matcher(tmp);
-//                
-//                if(m.find() == true){
-//                    wolf = Integer.parseInt(m.group());
-//                }
-//                
-//            }else{
-//                wolf = 99;
-//            }
-//            
-//            if(m4.find() == true){
-//                String tmp = m4.group();
-//                Matcher m = p.matcher(tmp);
-//                
-//                if(m.find() == true){
-//                    zoom = Integer.parseInt(m.group());
-//                }
-//            }else{
-//                zoom = 99;
-//            }
-//            
-//            if(m5.find() == true){
-//                String tmp = m5.group();
-//                Matcher m = p.matcher(tmp);
-//                
-//                if(m.find() == true){
-//                    vs = Integer.parseInt(m.group());
-//                }
-//                
-//            }else if(m6.find() == true){
-//                String tmp = m6.group();
-//                tmp = tmp.replaceAll("param_wolf\\d+_", "");
-//                vs = Integer.parseInt(tmp);
-//                
-//            }
-//            System.out.println("------------------------");
-//            System.out.println("param = "+param);
-//            System.out.println("wolf = "+wolf);
-//            System.out.println("zoom = "+zoom);
-//            System.out.println("vs = "+ vs);
-//            System.out.println("------------------------");
-//           
-//             // choose neuron output file according to the name; is there a better way to solve this ?
-//            //we search in a given directory (probably a tmp directory not known by the user) for a file with specific naming conventions: 
-//            //for now destdir is the directory where the files are assumed to lie in 
-//            /* this will basically look like this "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"*/ 
-//            
-//            //search all textfiles in a directory
-//            FilenameFilter textFilter = new FilenameFilter(){
-//                @Override
-//                public boolean accept(File dir, String name) {
-//                    return name.toLowerCase().endsWith(".txt"); 
-//                }
-//            };
-//            
-//            File[] files = destdir.listFiles(textFilter);
-//            
-//            for(File file : files){
-//                 //if we find a file that matches "AnyStart_//d+_//d+_//d+_AnyMiddlePart_//d+.txt"
-//                 if(file.getName().equals(start+"_"+wolf+"_"+vs+"_"+zoom+"_"+middle+"_"+param+".txt")){
-//                     System.out.println("Klappt! :)");
-//                     
-//                     ReadTextFile read = new ReadTextFile();
-//                     
-//                     read.readDataFromFile(2, file.getCanonicalPath());
-//                     ArrayList<Double> time = read.getTime(1);
-//                     ArrayList<Double> current = read.getCurrent(2);
-//                     
-//                                   
-//                     Trajectory modelresult = new Trajectory("Step "+counter);
-//                     
-//                     for(int i = 0; i<current.size(); i++){
-//                         modelresult.add(time.get(i), current.get(i));
-//                     }
-//                     
-//                     inter_res.add(modelresult);
-//                 }
-//                 
-//            }        
-//         
-//            //import neuron data and store them in a trajectory (readfiles method)
-//            
-//            //store as Trajectory as png in directory
-//            
-//            //remove all the textfiles
-//            counter++;
-//
-//        }
-//       
-//        
-//        //create successive pictures of the Trajectories
+//    public void plotIntermediateResults(/*Input*/) {
+    
 //    }
 }
  

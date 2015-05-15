@@ -7,3 +7,4 @@ ugshell
 libug.*
 /VRL-PE_NEURON/.nb-gradle/private/
 .nb_gradle
+.dylib
